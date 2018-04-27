@@ -1,0 +1,25 @@
+{
+  "name": "antd-theme-generator",
+  "version": "1.0.0",
+  "description":
+    "This a script to generate color specific styles less file and which you can use to change theme dynamically in browser",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "less-bundle-promise": "1.0.4",
+    "postcss": "^6.0.21",
+    "less": "^3.0.1"
+  },
+  "keywords": ["antd", "theme", "less", "dynamic-theme", "css"],
+  "author": {
+    "name": "mzohaibqc",
+    "url": "https://github.com/mzohaibqc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mzohaibqc/antd-theme-generator"
+  },
+  "license": "ISC"
+}
