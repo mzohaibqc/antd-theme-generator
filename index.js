@@ -209,46 +209,49 @@ function isValidColor(color) {
   related css rules based on Ant Design styles and your own custom styles
   By default color.less will be generated in /public directory
 */
-function generateTheme(options) {
+function generateTheme({
+  antDir,
+  stylesDir,
+  mainLessFile,
+  varFile,
+  outputFilePath,
+  themeVariables = ['@primary-color']
+}) {
   return new Promise((resolve, reject) => {
     /*
     Ant Design Specific Files (Change according to your project structure)
     You can even use different less based css framework and create color.less for  that
   
-    - antd - ant design instalation path
+    - antDir - ant design instalation path
     - entry - Ant Design less main file / entry file
     - styles - Ant Design less styles for each component
   */
-    const antd = options.antDir;
-    const stylesDir = options.stylesDir;
-    const entry = path.join(antd, "lib/style/index.less");
-    const styles = glob.sync(path.join(antd, "lib/*/style/index.less"));
+    const entry = path.join(antDir, "lib/style/index.less");
+    const styles = glob.sync(path.join(antDir, "lib/*/style/index.less"));
 
     /*
       You own custom styles (Change according to your project structure)
       
       - stylesDir - styles directory containing all less files 
-      - indexFile - less main file which imports all other custom styles
+      - mainLessFile - less main file which imports all other custom styles
       - varFile - variable file containing ant design specific and your own custom variables
     */
-    const indexFile = options.mainLessFile;
-    const varFile =
-      options.varFile || path.join(antd, "./lib/style/themes/default.less");
+    varFile = varFile || path.join(antDir, "./lib/style/themes/default.less");
 
     let content = fs.readFileSync(entry).toString();
     content += "\n";
     styles.forEach(style => {
       content += `@import "${style}";\n`;
     });
-    if (indexFile) {
-      const customStyles = fs.readFileSync(indexFile).toString();
+    if (mainLessFile) {
+      const customStyles = fs.readFileSync(mainLessFile).toString();
       content += `\n${customStyles}`;
     }
     let themeCompiledVars = {};
-    let themeVars = options.themeVariables || ["@primary-color"];
+    let themeVars = themeVariables || ["@primary-color"];
     const lessPaths = [
-      path.join(antd, "lib/styles"),
-      path.join(antd, "lib/style"),
+      path.join(antDir, "lib/styles"),
+      path.join(antDir, "lib/style"),
       stylesDir
     ];
     bundle({
@@ -317,14 +320,12 @@ function generateTheme(options) {
         }
         css = `${colorsLess}\n${css}`;
         themeVars.reverse().forEach(varName => {
-          css = `${css}\n${varName}: ${mappings[varName]};\n`;
+          css = `${varName}: ${mappings[varName]};\n${css}\n`;
         });
-        if (options.outputFilePath) {
-          fs.writeFileSync(options.outputFilePath, css);
+        if (outputFilePath) {
+          fs.writeFileSync(outputFilePath, css);
           console.log(
-            `Theme generated successfully. OutputFile: ${
-              options.outputFilePath
-            }`
+            `Theme generated successfully. OutputFile: ${outputFilePath}`
           );
         } else {
           console.log(`Theme generated successfully`);
