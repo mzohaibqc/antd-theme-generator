@@ -24,7 +24,7 @@ generateTheme(options).then(less => {
   console.log('Error', error);
 })
 ```
-
+## Note: include all color variables in `varFile` that you want to change dynamically and assign them unique color codes.
 Add following lines in your main html file
 
 ```

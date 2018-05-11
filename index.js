@@ -4,6 +4,11 @@ const glob = require("glob");
 const postcss = require("postcss");
 const less = require("less");
 const bundle = require("less-bundle-promise");
+
+function randomColor() {
+  return '#' + (Math.random() * 0xFFFFFF << 0).toString(16);
+}
+
 /*
   Recursively get the color code assigned to a variable e.g.
   @primary-color: #1890ff;
@@ -51,7 +56,6 @@ function generateColorMap(content) {
           return prev;
         }
         let [, varName, color] = matches;
-        // console.log(varName, color);
         if (color && color.startsWith("@")) {
           color = getColor(color, prev);
           if (!isValidColor(color)) return prev;
@@ -59,7 +63,6 @@ function generateColorMap(content) {
         } else if (isValidColor(color)) {
           prev[varName] = color;
         }
-        // console.log(varName, color);
         return prev;
       } catch (e) {
         console.log("e", e);
@@ -254,11 +257,12 @@ function generateTheme({
       path.join(antDir, "lib/style"),
       stylesDir
     ];
-    bundle({
+
+    return bundle({
       src: varFile
     })
       .then(colorsLess => {
-        const mappings = generateColorMap(colorsLess);
+        const mappings = Object.assign(generateColorMap(colorsLess), generateColorMap(mainLessFile));
         return [mappings, colorsLess];
       })
       .then(([mappings, colorsLess]) => {
@@ -305,17 +309,14 @@ function generateTheme({
       .then(([css, mappings, colorsLess]) => {
         themeVars.forEach(varName => {
           const color = mappings[varName];
-          css = css.replace(new RegExp(`${color}`, "g"), `${varName}`);
+          css = css.replace(new RegExp(`${color}`, "g"), varName);
         });
         if (themeVars.includes("@primary-color")) {
           // primary shades
           [1, 2, 3, 4, 5, 7, 8, 9, 10].forEach(key => {
             varName = `@primary-${key}`;
             let color = mappings[varName];
-            css = css.replace(
-              new RegExp(`${themeCompiledVars[varName]}`, "g"),
-              `${color}`
-            );
+            css = css.replace(new RegExp(`${themeCompiledVars[varName]}`, "g"), color);
           });
         }
         css = `${colorsLess}\n${css}`;
@@ -343,5 +344,6 @@ module.exports = {
   generateTheme,
   isValidColor,
   getLessVars,
+  randomColor,
   renderLessContent: render
 };
