@@ -13,7 +13,6 @@ const options = {
   varFile: path.join(__dirname, './src/styles/variables.less'), // default path is Ant Design default.less file
   mainLessFile: path.join(__dirname, './src/styles/index.less'),
   themeVariables: ['@primary-color'],
-  indexFileName: 'index.html',
   outputFilePath: path.join(__dirname, './public/color.less') // if provided, file will be created with generated less/styles
 }
 
@@ -31,7 +30,7 @@ Add following lines in your main html file
 <link rel="stylesheet/less" type="text/css" href="/color.less" />
 <script>
   window.less = {
-    async: true,
+    async: false,
     env: 'production'
   };
 </script>

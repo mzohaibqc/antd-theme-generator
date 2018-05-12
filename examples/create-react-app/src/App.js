@@ -14,12 +14,12 @@ import {
   message,
   Button,
   Upload,
-  DatePicker
+  DatePicker,
+  Progress
 } from "antd";
 import moment from "moment";
-import "rc-color-picker/assets/index.css";
 
-import VarColorPicker from "./VarColorPicker";
+import ColorPicker from "./ColorPicker";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -31,20 +31,21 @@ const RadioGroup = Radio.Group;
 class App extends Component {
   constructor(props) {
     super(props);
-    let vars = {
+    let initialValue = {
       '@primary-color': '#1987a7',
       '@secondary-color': '#0000ff',
       '@text-color': '#000000',
       '@text-color-secondary': '#eb2f96',
       '@heading-color': '#fa8c16',
-      '@layout-header-background': '#861c1c',
-      '@layout-sider-background': '#123456',
-      '@btn-primary-bg': '#fa0404'
+      '@layout-header-background': '#b36e94',
+      '@btn-primary-bg': '#397dcc'
     };
+    let vars = {};
+
     try {
-      vars = Object.assign({}, vars, JSON.parse(localStorage.getItem('app-theme')));
+      vars = Object.assign({}, initialValue, JSON.parse(localStorage.getItem('app-theme')));
     } finally {
-      this.state = { vars };
+      this.state = { vars, initialValue };
       window.less
         .modifyVars(vars)
         .then(() => { })
@@ -94,15 +95,39 @@ class App extends Component {
     <Fragment key={varName}>
       <Col xs={20}>{varName}</Col>
       <Col xs={4}>
-        <VarColorPicker
-          key={varName}
-          defaultColor={this.state.vars[varName]}
-          varName={varName}
-          onChangeComplete={this.onChangeComplete}
+        <ColorPicker
+          type="sketch"
+          small
+          color={this.state.vars[varName]}
+          position="bottom"
+          presetColors={[
+            '#F5222D',
+            '#FA541C',
+            '#FA8C16',
+            '#FAAD14',
+            '#FADB14',
+            '#A0D911',
+            '#52C41A',
+            '#13C2C2',
+            '#1890FF',
+            '#2F54EB',
+            '#722ED1',
+            '#EB2F96',
+          ]}
+          onChangeComplete={color => this.handleColorChange(varName, color)}
         />
       </Col>
     </Fragment>
   )
+  resetTheme = () => {
+    localStorage.setItem('app-theme', '{}');
+    this.setState({ vars: this.state.initialValue });
+    window.less
+      .modifyVars(this.state.initialValue)
+      .catch(error => {
+        message.error(`Failed to reset theme`);
+      });
+  }
 
   render() {
     const colorPickers = Object.keys(this.state.vars).map(varName => this.getColorPicker(varName));
@@ -202,12 +227,20 @@ class App extends Component {
                       <Card title="Theme" style={{ width: 300 }}>
                         <Row>
                           {colorPickers}
-                          <Col xs={24}>
+                          {/* <Col xs={24}>
                             <Button
                               type="primary"
                               onClick={() => this.handleColorChange()}
                             >
                               Change Theme
+                            </Button>
+                          </Col> */}
+                          <Col xs={24} style={{ marginTop: '10px' }}>
+                            <Button
+                              type="primary"
+                              onClick={this.resetTheme}
+                            >
+                              Reset Theme
                             </Button>
                           </Col>
                         </Row>
@@ -273,6 +306,7 @@ class App extends Component {
                               </RadioGroup>
                             )}
                           </FormItem>
+                          <Progress percent={60} />
                         </Col>
                         <Col xs={24} sm={12}>
                           <FormItem {...formItemLayout} label="Date">
@@ -297,11 +331,14 @@ class App extends Component {
                             )}
                           </FormItem>
                           <FormItem wrapperCol={{ span: 12, offset: 6 }}>
-                            <Button type="default">Cancel</Button>{" "}
+                            <Button type="default">Cancel</Button>
                             <Button type="primary" htmlType="submit">
                               Submit
                             </Button>
                           </FormItem>
+                          <Row type="flex" justify="center" className="secondary-color">
+                            color : @secondary-color;
+                          </Row>
                         </Col>
                       </Form>
                     </Col>
@@ -318,4 +355,3 @@ class App extends Component {
 
 App = Form.create()(App);
 export default App;
-

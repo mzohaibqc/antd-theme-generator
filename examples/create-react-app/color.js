@@ -14,7 +14,6 @@ const options = {
     '@heading-color',
     '@layout-body-background',
     '@btn-primary-bg',
-    '@layout-sider-background',
     '@layout-header-background'
   ],
   indexFileName: 'index.html',
