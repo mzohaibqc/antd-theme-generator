@@ -320,7 +320,9 @@ function generateTheme({
           });
         }
         css = `${colorsLess}\n${css}`;
+
         themeVars.reverse().forEach(varName => {
+          css = css.replace(new RegExp(`${varName}(\ *):(.*);`, 'g'), '');
           css = `${varName}: ${mappings[varName]};\n${css}\n`;
         });
         if (outputFilePath) {
