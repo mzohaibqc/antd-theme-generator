@@ -180,9 +180,10 @@ function getLessVars(filtPath) {
   Input: @primary-1
   Output: color(~`colorPalette("@{primary-color}", ' 1 ')`)
 */
-function getPrimaryShade(varName) {
-  const number = varName.split("-")[1];
-  return 'color(~`colorPalette("@{primary-color}", ' + number + ")`)";
+function getShade(varName) {
+  let [, className, number] = varName.match(/(.*)-(\d)/);
+  if (/primary-\d/.test(varName)) className = '@primary-color';
+  return 'color(~`colorPalette("@{' + className.replace('@', '') + '}", ' + number + ")`)";
 }
 
 /*
@@ -272,14 +273,14 @@ function generateTheme({
           const color = mappings[varName];
           css = `.${varName.replace("@", "")} { color: ${color}; }\n ${css}`;
         });
-        if (themeVars.includes("@primary-color")) {
-          [1, 2, 3, 4, 5, 7, 8, 9, 10].forEach(key => {
-            varName = `@primary-${key}`;
-            css = `.${varName.replace("@", "")} { color: ${getPrimaryShade(
-              varName
-            )}; }\n ${css}`;
+
+        themeVars.forEach(varName => {
+          [1, 2, 3, 4, 5, 7].forEach(key => {
+            let name = varName === '@primary-color' ? `@primary-${key}` : `${varName}-${key}`;
+            css = `.${name.replace("@", "")} { color: ${getShade(name)}; }\n ${css}`;
           });
-        }
+        });
+
         css = `${colorsLess}\n${css}`;
         return render(css, lessPaths).then(({ css }) => [
           css,
@@ -311,14 +312,16 @@ function generateTheme({
           const color = mappings[varName];
           css = css.replace(new RegExp(`${color}`, "g"), varName);
         });
-        if (themeVars.includes("@primary-color")) {
-          // primary shades
-          [1, 2, 3, 4, 5, 7, 8, 9, 10].forEach(key => {
-            varName = `@primary-${key}`;
-            let color = mappings[varName];
-            css = css.replace(new RegExp(`${themeCompiledVars[varName]}`, "g"), color);
-          });
-        }
+        Object.keys(themeCompiledVars).forEach(varName => {
+          let color;
+          if (/(.*)-(\d)/.test(varName)) {
+            color = getShade(varName);
+          } else {
+            color = mappings[varName];
+          }
+          css = css.replace(new RegExp(`${themeCompiledVars[varName]}`, "g"), color);
+        });
+
         css = `${colorsLess}\n${css}`;
 
         themeVars.reverse().forEach(varName => {

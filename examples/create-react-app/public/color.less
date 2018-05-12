@@ -2,11 +2,11 @@
 @secondary-color: #0000ff;
 @text-color: #000000;
 @text-color-secondary: #eb2f96;
-@heading-color: #fa8c16;
+@heading-color: #ccccdd;
 @layout-body-background: #f0f2f5;
-@btn-primary-bg: #fa0404;
+@btn-primary-bg: #397dcc;
 @layout-sider-background: #123456;
-@layout-header-background: #861c1c;
+@layout-header-background: #9e8989;
 // This file will contain all varibales, our custom varibales and
 //those from Ant Design which we want to override.
 /* stylelint-disable at-rule-empty-line-before,at-rule-name-space-after,at-rule-no-unknown */
@@ -2352,8 +2352,8 @@ mark {
 .ant-btn-primary:hover,
 .ant-btn-primary:focus {
   color: #fff;
-  background-color: #ff352e;
-  border-color: #ff352e;
+  background-color: color(~`colorPalette("@{btn-primary-bg}", 5)`);
+  border-color: color(~`colorPalette("@{btn-primary-bg}", 5)`);
 }
 .ant-btn-primary:hover > a:only-child,
 .ant-btn-primary:focus > a:only-child {
@@ -2366,8 +2366,8 @@ mark {
 .ant-btn-primary:active,
 .ant-btn-primary.active {
   color: #fff;
-  background-color: #d40007;
-  border-color: #d40007;
+  background-color: color(~`colorPalette("@{btn-primary-bg}", 7)`);
+  border-color: color(~`colorPalette("@{btn-primary-bg}", 7)`);
 }
 .ant-btn-primary:active > a:only-child,
 .ant-btn-primary.active > a:only-child {
@@ -2747,9 +2747,9 @@ mark {
 }
 .ant-btn-background-ghost.ant-btn-primary:hover,
 .ant-btn-background-ghost.ant-btn-primary:focus {
-  color: #ff352e;
+  color: color(~`colorPalette("@{btn-primary-bg}", 5)`);
   background-color: transparent;
-  border-color: #ff352e;
+  border-color: color(~`colorPalette("@{btn-primary-bg}", 5)`);
 }
 .ant-btn-background-ghost.ant-btn-primary:hover > a:only-child,
 .ant-btn-background-ghost.ant-btn-primary:focus > a:only-child {
@@ -2761,9 +2761,9 @@ mark {
 }
 .ant-btn-background-ghost.ant-btn-primary:active,
 .ant-btn-background-ghost.ant-btn-primary.active {
-  color: #d40007;
+  color: color(~`colorPalette("@{btn-primary-bg}", 7)`);
   background-color: transparent;
-  border-color: #d40007;
+  border-color: color(~`colorPalette("@{btn-primary-bg}", 7)`);
 }
 .ant-btn-background-ghost.ant-btn-primary:active > a:only-child,
 .ant-btn-background-ghost.ant-btn-primary.active > a:only-child {
@@ -3429,8 +3429,8 @@ mark {
 .ant-calendar .ant-calendar-ok-btn:hover,
 .ant-calendar .ant-calendar-ok-btn:focus {
   color: #fff;
-  background-color: #ff352e;
-  border-color: #ff352e;
+  background-color: color(~`colorPalette("@{btn-primary-bg}", 5)`);
+  border-color: color(~`colorPalette("@{btn-primary-bg}", 5)`);
 }
 .ant-calendar .ant-calendar-ok-btn:hover > a:only-child,
 .ant-calendar .ant-calendar-ok-btn:focus > a:only-child {
@@ -3443,8 +3443,8 @@ mark {
 .ant-calendar .ant-calendar-ok-btn:active,
 .ant-calendar .ant-calendar-ok-btn.active {
   color: #fff;
-  background-color: #d40007;
-  border-color: #d40007;
+  background-color: color(~`colorPalette("@{btn-primary-bg}", 7)`);
+  border-color: color(~`colorPalette("@{btn-primary-bg}", 7)`);
 }
 .ant-calendar .ant-calendar-ok-btn:active > a:only-child,
 .ant-calendar .ant-calendar-ok-btn.active > a:only-child {
@@ -6147,8 +6147,8 @@ tr.ant-table-expanded-row:hover {
 }
 .ant-tag-pink {
   color: @text-color-secondary;
-  background: #fff0f6;
-  border-color: #ffadd2;
+  background: color(~`colorPalette("@{text-color-secondary}", 1)`);
+  border-color: color(~`colorPalette("@{text-color-secondary}", 3)`);
 }
 .ant-tag-pink-inverse {
   background: @text-color-secondary;
@@ -6157,8 +6157,8 @@ tr.ant-table-expanded-row:hover {
 }
 .ant-tag-magenta {
   color: @text-color-secondary;
-  background: #fff0f6;
-  border-color: #ffadd2;
+  background: color(~`colorPalette("@{text-color-secondary}", 1)`);
+  border-color: color(~`colorPalette("@{text-color-secondary}", 3)`);
 }
 .ant-tag-magenta-inverse {
   background: @text-color-secondary;
@@ -6186,13 +6186,13 @@ tr.ant-table-expanded-row:hover {
   color: #fff;
 }
 .ant-tag-orange {
-  color: @heading-color;
+  color: #fa8c16;
   background: #fff7e6;
   border-color: #ffd591;
 }
 .ant-tag-orange-inverse {
-  background: @heading-color;
-  border-color: @heading-color;
+  background: #fa8c16;
+  border-color: #fa8c16;
   color: #fff;
 }
 .ant-tag-yellow {

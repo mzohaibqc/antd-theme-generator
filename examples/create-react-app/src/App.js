@@ -135,7 +135,7 @@ class App extends Component {
               </Row>
             </Header>
             <Layout>
-              <Sider width={200} style={{ background: "#fff" }}>
+              <Sider width={200}>
                 <Menu
                   mode="inline"
                   defaultSelectedKeys={["1"]}
