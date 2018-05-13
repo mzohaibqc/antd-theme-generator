@@ -19,7 +19,7 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
-    "antd-theme-generator": "^1.0.1",
+    "antd-theme-generator": "1.0.4",
     "babel-plugin-import": "^1.7.0"
   }
 }
