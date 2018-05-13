@@ -308,18 +308,17 @@ function generateTheme({
           .then(({ css }) => [css, mappings, colorsLess]);
       })
       .then(([css, mappings, colorsLess]) => {
-        themeVars.forEach(varName => {
-          const color = mappings[varName];
-          css = css.replace(new RegExp(`${color}`, "g"), varName);
-        });
         Object.keys(themeCompiledVars).forEach(varName => {
           let color;
           if (/(.*)-(\d)/.test(varName)) {
-            color = getShade(varName);
+            color = themeCompiledVars[varName];
+            varName = getShade(varName);
           } else {
-            color = mappings[varName];
+            color = themeCompiledVars[varName];
           }
-          css = css.replace(new RegExp(`${themeCompiledVars[varName]}`, "g"), color);
+          console.log(color, varName);
+          color = color.replace('(', '\\(').replace(')', '\\)');
+          css = css.replace(new RegExp(`${color}`, "g"), varName);
         });
 
         css = `${colorsLess}\n${css}`;
