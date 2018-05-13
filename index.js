@@ -316,7 +316,6 @@ function generateTheme({
           } else {
             color = themeCompiledVars[varName];
           }
-          console.log(color, varName);
           color = color.replace('(', '\\(').replace(')', '\\)');
           css = css.replace(new RegExp(`${color}`, "g"), varName);
         });
