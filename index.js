@@ -215,6 +215,7 @@ function isValidColor(color) {
 */
 function generateTheme({
   antDir,
+  antdStylesDir,
   stylesDir,
   mainLessFile,
   varFile,
@@ -230,8 +231,14 @@ function generateTheme({
     - entry - Ant Design less main file / entry file
     - styles - Ant Design less styles for each component
   */
-    const entry = path.join(antDir, "lib/style/index.less");
-    const styles = glob.sync(path.join(antDir, "lib/*/style/index.less"));
+    let antdPath;
+    if (antdStylesDir) {
+      antdPath = antdStylesDir;
+    } else {
+      antdPath = path.join(antDir, 'lib');
+    }
+    const entry = path.join(antdPath, './style/index.less');
+    const styles = glob.sync(path.join(antdPath, './*/style/index.less'));
 
     /*
       You own custom styles (Change according to your project structure)
@@ -240,7 +247,7 @@ function generateTheme({
       - mainLessFile - less main file which imports all other custom styles
       - varFile - variable file containing ant design specific and your own custom variables
     */
-    varFile = varFile || path.join(antDir, "./lib/style/themes/default.less");
+    varFile = varFile || path.join(antdPath, "./style/themes/default.less");
 
     let content = fs.readFileSync(entry).toString();
     content += "\n";
@@ -254,8 +261,7 @@ function generateTheme({
     let themeCompiledVars = {};
     let themeVars = themeVariables || ["@primary-color"];
     const lessPaths = [
-      path.join(antDir, "lib/styles"),
-      path.join(antDir, "lib/style"),
+      path.join(antdPath, "./style"),
       stylesDir
     ];
 
