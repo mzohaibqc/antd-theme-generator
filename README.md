@@ -23,7 +23,8 @@ generateTheme(options).then(less => {
   console.log('Error', error);
 })
 ```
-## Note: include all color variables in `varFile` that you want to change dynamically and assign them unique color codes.
+## Note: include all color variables in `varFile` that you want to change dynamically and assign them unique color codes. Don't assign same color to two or more variables and don't use `#fff`, `#ffffff`, `#000` or `#000000`. If you still want white or black color as default, slightly change it e.g. `#fffffe` or `#000001` which will not replace common background colors from other components.
+
 Add following lines in your main html file
 
 ```
