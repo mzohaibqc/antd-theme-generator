@@ -3,10 +3,14 @@ const path = require("path");
 const glob = require("glob");
 const postcss = require("postcss");
 const less = require("less");
+const hash = require("hash.js");
 const bundle = require("less-bundle-promise");
 
+let cacheHash = "";
+let cacheCss = "";
+
 function randomColor() {
-  return '#' + (Math.random() * 0xFFFFFF << 0).toString(16);
+  return "#" + ((Math.random() * 0xffffff) << 0).toString(16);
 }
 
 /*
@@ -182,8 +186,14 @@ function getLessVars(filtPath) {
 */
 function getShade(varName) {
   let [, className, number] = varName.match(/(.*)-(\d)/);
-  if (/primary-\d/.test(varName)) className = '@primary-color';
-  return 'color(~`colorPalette("@{' + className.replace('@', '') + '}", ' + number + ")`)";
+  if (/primary-\d/.test(varName)) className = "@primary-color";
+  return (
+    'color(~`colorPalette("@{' +
+    className.replace("@", "") +
+    '}", ' +
+    number +
+    ")`)"
+  );
 }
 
 /*
@@ -220,7 +230,7 @@ function generateTheme({
   mainLessFile,
   varFile,
   outputFilePath,
-  themeVariables = ['@primary-color']
+  themeVariables = ["@primary-color"]
 }) {
   return new Promise((resolve, reject) => {
     /*
@@ -235,10 +245,10 @@ function generateTheme({
     if (antdStylesDir) {
       antdPath = antdStylesDir;
     } else {
-      antdPath = path.join(antDir, 'lib');
+      antdPath = path.join(antDir, "lib");
     }
-    const entry = path.join(antdPath, './style/index.less');
-    const styles = glob.sync(path.join(antdPath, './*/style/index.less'));
+    const entry = path.join(antdPath, "./style/index.less");
+    const styles = glob.sync(path.join(antdPath, "./*/style/index.less"));
 
     /*
       You own custom styles (Change according to your project structure)
@@ -254,22 +264,32 @@ function generateTheme({
     styles.forEach(style => {
       content += `@import "${style}";\n`;
     });
+
+    const contentHash = hash
+      .sha256()
+      .update("abc")
+      .digest("hex");
+    if (contentHash === cacheHash) {
+      resolve(cacheCss);
+      return;
+    }
+    cacheHash = contentHash;
     if (mainLessFile) {
       const customStyles = fs.readFileSync(mainLessFile).toString();
       content += `\n${customStyles}`;
     }
     let themeCompiledVars = {};
     let themeVars = themeVariables || ["@primary-color"];
-    const lessPaths = [
-      path.join(antdPath, "./style"),
-      stylesDir
-    ];
+    const lessPaths = [path.join(antdPath, "./style"), stylesDir];
 
     return bundle({
       src: varFile
     })
       .then(colorsLess => {
-        const mappings = Object.assign(generateColorMap(colorsLess), generateColorMap(mainLessFile));
+        const mappings = Object.assign(
+          generateColorMap(colorsLess),
+          generateColorMap(mainLessFile)
+        );
         return [mappings, colorsLess];
       })
       .then(([mappings, colorsLess]) => {
@@ -282,8 +302,13 @@ function generateTheme({
 
         themeVars.forEach(varName => {
           [1, 2, 3, 4, 5, 7].forEach(key => {
-            let name = varName === '@primary-color' ? `@primary-${key}` : `${varName}-${key}`;
-            css = `.${name.replace("@", "")} { color: ${getShade(name)}; }\n ${css}`;
+            let name =
+              varName === "@primary-color"
+                ? `@primary-${key}`
+                : `${varName}-${key}`;
+            css = `.${name.replace("@", "")} { color: ${getShade(
+              name
+            )}; }\n ${css}`;
           });
         });
 
@@ -322,14 +347,14 @@ function generateTheme({
           } else {
             color = themeCompiledVars[varName];
           }
-          color = color.replace('(', '\\(').replace(')', '\\)');
+          color = color.replace("(", "\\(").replace(")", "\\)");
           css = css.replace(new RegExp(`${color}`, "g"), varName);
         });
 
         css = `${colorsLess}\n${css}`;
 
         themeVars.reverse().forEach(varName => {
-          css = css.replace(new RegExp(`${varName}(\ *):(.*);`, 'g'), '');
+          css = css.replace(new RegExp(`${varName}(\ *):(.*);`, "g"), "");
           css = `${varName}: ${mappings[varName]};\n${css}\n`;
         });
         if (outputFilePath) {
@@ -340,6 +365,7 @@ function generateTheme({
         } else {
           console.log(`Theme generated successfully`);
         }
+        cacheCss = css;
         return resolve(css);
       })
       .catch(err => {
