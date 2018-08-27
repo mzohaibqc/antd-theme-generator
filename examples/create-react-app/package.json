@@ -4,9 +4,8 @@
   "private": true,
   "dependencies": {
     "antd": "^3.8.4",
-    "antd-theme-generator": "file:../../antd-theme-generator-1.1.1.tgz",
+    "antd-theme-generator": "1.1.3",
     "glob": "^7.1.3",
-    "less-bundle-promise": "file:../../../less-bundle-promise/build/less-bundle-promise-1.0.6.tgz",
     "react": "^16.3.2",
     "react-app-rewire-less": "^2.1.1",
     "react-app-rewired": "^1.5.2",
