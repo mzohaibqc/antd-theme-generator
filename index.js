@@ -4,6 +4,7 @@ const glob = require("glob");
 const postcss = require("postcss");
 const less = require("less");
 const bundle = require("less-bundle-promise");
+const NpmImportPlugin = require('less-plugin-npm-import');
 
 function randomColor() {
   return '#' + (Math.random() * 0xFFFFFF << 0).toString(16);
@@ -208,6 +209,30 @@ function isValidColor(color) {
   );
 }
 
+function getCssModulesStyles(stylesDir, antdStylesDir) {
+  const styles = glob.sync(path.join(stylesDir, './**/*.less'));
+  return Promise.all(
+    styles.map(p =>
+      less
+        .render(fs.readFileSync(p).toString(), {
+          paths: [
+            stylesDir,
+            antdStylesDir,
+          ],
+          filename: path.resolve(p),
+          javascriptEnabled: true,
+          plugins: [new NpmImportPlugin({ prefix: '~' })],
+        })
+        .catch(() => '\n')
+    )
+  )
+    .then(csss => csss.map(c => c.css).join('\n'))
+    .catch(err => {
+      console.log('Error', err);
+      return '';
+    });
+}
+
 /*
   This is main function which call all other functions to generate color.less file which contins all color
   related css rules based on Ant Design styles and your own custom styles
@@ -220,6 +245,7 @@ function generateTheme({
   mainLessFile,
   varFile,
   outputFilePath,
+  cssModules = false,
   themeVariables = ['@primary-color']
 }) {
   return new Promise((resolve, reject) => {
@@ -299,11 +325,16 @@ function generateTheme({
         const regex = /.(?=\S*['-])([.a-zA-Z0-9'-]+)\ {\n\ \ color:\ (.*);/g;
         themeCompiledVars = getMatches(css, regex);
         content = `${content}\n${colorsLess}`;
-        return render(content, lessPaths).then(({ css }) => [
-          css,
-          mappings,
-          colorsLess
-        ]);
+        return render(content, lessPaths).then(({ css }) => {
+          return getCssModulesStyles(stylesDir, antdStylesDir).then(customCss => {
+            return [
+              `${customCss}\n${css}`,
+              mappings,
+              colorsLess
+            ];
+          })
+          
+        });
       })
       .then(([css, mappings, colorsLess]) => {
         return postcss([reducePlugin])
