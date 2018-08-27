@@ -9,7 +9,8 @@ module.exports = function override(config, env) {
     config
   );
   config = rewireLess.withLoaderOptions({
-    modifyVars: getLessVars(path.join(__dirname, './src/styles/vars.less'))
+    modifyVars: getLessVars(path.join(__dirname, './src/styles/vars.less')),
+    javascriptEnabled: true
   })(config, env);
   return config;
 };
