@@ -10,10 +10,11 @@
     "hash.js": "^1.1.5",
     "less": "^2.7.2",
     "less-bundle-promise": "1.0.4",
-    "postcss": "^6.0.21"
+    "postcss": "^6.0.21",
+    "less-plugin-npm-import": "^2.1.0"
   },
   "keywords": [
-    "antd8
+    "antd",
     "theme",
     "less",
     "dynamic-theme",
