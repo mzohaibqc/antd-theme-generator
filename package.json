@@ -13,7 +13,7 @@
     "postcss": "^6.0.21"
   },
   "keywords": [
-    "antd8
+    "antd",
     "theme",
     "less",
     "dynamic-theme",
