@@ -4,6 +4,10 @@ const glob = require("glob");
 const postcss = require("postcss");
 const less = require("less");
 const bundle = require("less-bundle-promise");
+const hash = require("hash.js");
+
+let hashCache = "";
+let cssCache = "";
 
 function randomColor() {
   return '#' + (Math.random() * 0xFFFFFF << 0).toString(16);
@@ -258,6 +262,12 @@ function generateTheme({
       const customStyles = fs.readFileSync(mainLessFile).toString();
       content += `\n${customStyles}`;
     }
+    const hashCode = hash.sha256().update(content).digest('hex');
+    if(hashCode === hashCache){
+      resolve(cssCache);
+      return;
+    }
+    hashCache = hashCode;
     let themeCompiledVars = {};
     let themeVars = themeVariables || ["@primary-color"];
     const lessPaths = [
@@ -340,6 +350,7 @@ function generateTheme({
         } else {
           console.log(`Theme generated successfully`);
         }
+        cssCache = css;
         return resolve(css);
       })
       .catch(err => {
