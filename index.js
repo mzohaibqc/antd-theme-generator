@@ -377,7 +377,7 @@ function generateTheme({
         if (outputFilePath) {
           fs.writeFileSync(outputFilePath, css);
           console.log(
-            `Theme generated successfully. OutputFile: ${outputFilePath}`
+            `🌈 Theme generated successfully. OutputFile: ${outputFilePath}`
           );
         } else {
           console.log(`Theme generated successfully`);
