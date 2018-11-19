@@ -38,7 +38,7 @@ Add following lines in your main html file
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/less.js/2.7.2/less.min.js"></script>
 ```
 
-Now you can update colors by updating less avriables like this
+Now you can update colors by updating less variables like this
 
 ```
 window.less.modifyVars({
