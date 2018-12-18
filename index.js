@@ -209,7 +209,7 @@ function isValidColor(color) {
       [3, 4, 6, 8].indexOf(color.length) > -1 && !isNaN(parseInt(color, 16))
     );
   }
-  return /^(rgb|hsl)a?\((\d+%?(deg|rad|grad|turn)?[,\s]+){2,3}[\s\/]*[\d\.]+%?\)$/i.test(
+  return /^(rgb|hsl|hsv)a?\((\d+%?(deg|rad|grad|turn)?[,\s]+){2,3}[\s\/]*[\d\.]+%?\)$/i.test(
     color
   );
 }
