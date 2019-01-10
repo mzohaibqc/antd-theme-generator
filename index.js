@@ -6,6 +6,12 @@ const less = require("less");
 const bundle = require("less-bundle-promise");
 const hash = require("hash.js");
 const NpmImportPlugin = require('less-plugin-npm-import');
+const colorsOnly = require('postcss-colors-only');
+
+const options = {
+  withoutGrey: true, // set to true to remove rules that only have grey colors
+  withoutMonochrome: true, // set to true to remove rules that only have grey, black, or white colors
+};
 
 let hashCache = "";
 let cssCache = "";
@@ -349,6 +355,7 @@ function generateTheme({
       })
       .then(([css, mappings, colorsLess]) => {
         return postcss([reducePlugin])
+        // return postcss.use(colorsOnly(options))
           .process(css, {
             parser: less.parser,
             from: entry
@@ -374,6 +381,7 @@ function generateTheme({
           css = css.replace(new RegExp(`${varName}(\ *):(.*);`, 'g'), '');
           css = `${varName}: ${mappings[varName]};\n${css}\n`;
         });
+        css = css.replace(/\\9/g, '');
         if (outputFilePath) {
           fs.writeFileSync(outputFilePath, css);
           console.log(

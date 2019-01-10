@@ -15,7 +15,8 @@ const options = {
     '@layout-body-background',
     '@btn-primary-bg',
     '@layout-header-background',
-    '@border-color-base'
+    '@border-color-base',
+    '@white'
   ],
   indexFileName: 'index.html',
   outputFilePath: path.join(__dirname, './public/color.less'),
