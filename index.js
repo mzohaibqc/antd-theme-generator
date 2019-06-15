@@ -372,7 +372,8 @@ function generateTheme({
             color = themeCompiledVars[varName];
           }
           color = color.replace('(', '\\(').replace(')', '\\)');
-          css = css.replace(new RegExp(`${color}`, "g"), varName);
+          // css = css.replace(new RegExp(`${color}`, "g"), varName); // Fixed bug https://github.com/mzohaibqc/antd-theme-webpack-plugin/issues/25
+          css = css.replace(new RegExp(`${color}` + ' *;', "g"), `${varName};`);
         });
 
         css = `${colorsLess}\n${css}`;
