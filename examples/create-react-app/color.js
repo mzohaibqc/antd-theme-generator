@@ -20,6 +20,7 @@ const options = {
   ],
   indexFileName: 'index.html',
   outputFilePath: path.join(__dirname, './public/color.less'),
+  customColorRegexArray: [/^fade\(.*\)$/]
 }
 
 generateTheme(options).then(less => {

@@ -54,7 +54,7 @@ function getColor(varName, mappings) {
     ....
   }
 */
-function generateColorMap(content) {
+function generateColorMap(content, customColorRegexArray = []) {
   return content
     .split("\n")
     .filter(line => line.startsWith("@") && line.indexOf(":") > -1)
@@ -69,9 +69,9 @@ function generateColorMap(content) {
         let [, varName, color] = matches;
         if (color && color.startsWith("@")) {
           color = getColor(color, prev);
-          if (!isValidColor(color)) return prev;
+          if (!isValidColor(color, customColorRegexArray)) return prev;
           prev[varName] = color;
-        } else if (isValidColor(color)) {
+        } else if (isValidColor(color, customColorRegexArray)) {
           prev[varName] = color;
         }
         return prev;
@@ -206,7 +206,7 @@ function getShade(varName) {
   isValidColor('rgba(0, 0, 0, 0.5)'); //true
   isValidColor('20px'); //false
 */
-function isValidColor(color) {
+function isValidColor(color, customColorRegexArray = []) {
   if (!color || color.match(/px/g)) return false;
   if (color.match(/colorPalette|fade/g)) return true;
   if (color.charAt(0) === "#") {
@@ -215,9 +215,16 @@ function isValidColor(color) {
       [3, 4, 6, 8].indexOf(color.length) > -1 && !isNaN(parseInt(color, 16))
     );
   }
-  return /^(rgb|hsl|hsv)a?\((\d+%?(deg|rad|grad|turn)?[,\s]+){2,3}[\s\/]*[\d\.]+%?\)$/i.test(
+  const isColor = /^(rgb|hsl|hsv)a?\((\d+%?(deg|rad|grad|turn)?[,\s]+){2,3}[\s\/]*[\d\.]+%?\)$/i.test(
     color
   );
+  if (isColor) return true;
+  if (customColorRegexArray.length > 0) {
+    return customColorRegexArray.reduce((prev, regex) => {
+      return prev || regex.test(color);
+    }, false);
+  }
+  return false;
 }
 
 function getCssModulesStyles(stylesDir, antdStylesDir) {
@@ -257,7 +264,8 @@ function generateTheme({
   varFile,
   outputFilePath,
   cssModules = false,
-  themeVariables = ['@primary-color']
+  themeVariables = ['@primary-color'],
+  customColorRegexArray = []
 }) {
   return new Promise((resolve, reject) => {
     /*
@@ -312,7 +320,7 @@ function generateTheme({
       src: varFile
     })
       .then(colorsLess => {
-        const mappings = Object.assign(generateColorMap(colorsLess), generateColorMap(mainLessFile));
+        const mappings = Object.assign(generateColorMap(colorsLess, customColorRegexArray), generateColorMap(mainLessFile, customColorRegexArray));
         return [mappings, colorsLess];
       })
       .then(([mappings, colorsLess]) => {
