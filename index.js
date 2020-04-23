@@ -9,7 +9,7 @@ const NpmImportPlugin = require('less-plugin-npm-import');
 const colorsOnly = require('postcss-colors-only');
 
 const options = {
-  withoutGrey: true, // set to true to remove rules that only have grey colors
+  withoutGrey: true, // 123set to true to remove rules that only have grey colors
   withoutMonochrome: true, // set to true to remove rules that only have grey, black, or white colors
 };
 
