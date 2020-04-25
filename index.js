@@ -108,6 +108,9 @@ const reducePlugin = postcss.plugin("reducePlugin", () => {
     }
     let removeRule = true;
     rule.walkDecls(decl => {
+      if(decl.prop.includes("background-image")) {
+        decl.remove();
+      }
       if (
         !decl.prop.includes("color") &&
         !decl.prop.includes("background") &&
