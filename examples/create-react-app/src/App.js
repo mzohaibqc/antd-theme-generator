@@ -15,7 +15,13 @@ import {
   Button,
   Upload,
   DatePicker,
-  Progress
+  Progress,
+  Dropdown,
+  Pagination,
+  Checkbox,
+  Badge,
+  List,
+  Avatar
 } from "antd";
 import moment from "moment";
 
@@ -32,23 +38,27 @@ class App extends Component {
   constructor(props) {
     super(props);
     let initialValue = {
-      '@primary-color': '#1987a7',
-      '@secondary-color': '#0000ff',
-      '@text-color': '#000000',
-      '@text-color-secondary': '#eb2f96',
-      '@heading-color': '#fa8c16',
-      '@layout-header-background': '#b36e94',
-      '@btn-primary-bg': '#397dcc'
+      "@primary-color": "#1987a7",
+      "@secondary-color": "#0000ff",
+      "@text-color": "#000000",
+      "@text-color-secondary": "#eb2f96",
+      "@heading-color": "#fa8c16",
+      "@layout-header-background": "#b36e94",
+      "@btn-primary-bg": "#397dcc"
     };
     let vars = {};
 
     try {
-      vars = Object.assign({}, initialValue, JSON.parse(localStorage.getItem('app-theme')));
+      vars = Object.assign(
+        {},
+        initialValue,
+        JSON.parse(localStorage.getItem("app-theme"))
+      );
     } finally {
       this.state = { vars, initialValue };
       window.less
         .modifyVars(vars)
-        .then(() => { })
+        .then(() => {})
         .catch(error => {
           message.error(`Failed to update theme`);
         });
@@ -91,7 +101,7 @@ class App extends Component {
       });
   };
 
-  getColorPicker = (varName) => (
+  getColorPicker = varName => (
     <Fragment key={varName}>
       <Col xs={20}>{varName}</Col>
       <Col xs={4}>
@@ -101,41 +111,88 @@ class App extends Component {
           color={this.state.vars[varName]}
           position="bottom"
           presetColors={[
-            '#F5222D',
-            '#FA541C',
-            '#FA8C16',
-            '#FAAD14',
-            '#FADB14',
-            '#A0D911',
-            '#52C41A',
-            '#13C2C2',
-            '#1890FF',
-            '#2F54EB',
-            '#722ED1',
-            '#EB2F96',
+            "#F5222D",
+            "#FA541C",
+            "#FA8C16",
+            "#FAAD14",
+            "#FADB14",
+            "#A0D911",
+            "#52C41A",
+            "#13C2C2",
+            "#1890FF",
+            "#2F54EB",
+            "#722ED1",
+            "#EB2F96"
           ]}
           onChangeComplete={color => this.handleColorChange(varName, color)}
         />
       </Col>
     </Fragment>
-  )
+  );
   resetTheme = () => {
-    localStorage.setItem('app-theme', '{}');
+    localStorage.setItem("app-theme", "{}");
     this.setState({ vars: this.state.initialValue });
-    window.less
-      .modifyVars(this.state.initialValue)
-      .catch(error => {
-        message.error(`Failed to reset theme`);
-      });
-  }
+    window.less.modifyVars(this.state.initialValue).catch(error => {
+      message.error(`Failed to reset theme`);
+    });
+  };
 
   render() {
-    const colorPickers = Object.keys(this.state.vars).map(varName => this.getColorPicker(varName));
+    const colorPickers = Object.keys(this.state.vars).map(varName =>
+      this.getColorPicker(varName)
+    );
     const { getFieldDecorator } = this.props.form;
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 18 }
     };
+
+    const listData = [
+      {
+        title: "Ant Design Title 1"
+      },
+      {
+        title: "Ant Design Title 2"
+      },
+      {
+        title: "Ant Design Title 3"
+      },
+      {
+        title: "Ant Design Title 4"
+      }
+    ];
+
+    const menu = (
+      <Menu>
+        <Menu.Item>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="http://www.alipay.com/"
+          >
+            1st menu item
+          </a>
+        </Menu.Item>
+        <Menu.Item>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="http://www.taobao.com/"
+          >
+            2nd menu item
+          </a>
+        </Menu.Item>
+        <Menu.Item>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="http://www.tmall.com/"
+          >
+            3rd menu item
+          </a>
+        </Menu.Item>
+      </Menu>
+    );
     return (
       <div className="App">
         <Row>
@@ -162,6 +219,7 @@ class App extends Component {
             <Layout>
               <Sider width={200}>
                 <Menu
+                  theme="dark"
                   mode="inline"
                   defaultSelectedKeys={["1"]}
                   defaultOpenKeys={["sub1"]}
@@ -171,7 +229,8 @@ class App extends Component {
                     key="sub1"
                     title={
                       <span>
-                        <Icon type="user" />subnav 1
+                        <Icon type="user" />
+                        subnav 1
                       </span>
                     }
                   >
@@ -184,7 +243,8 @@ class App extends Component {
                     key="sub2"
                     title={
                       <span>
-                        <Icon type="laptop" />subnav 2
+                        <Icon type="laptop" />
+                        subnav 2
                       </span>
                     }
                   >
@@ -197,7 +257,8 @@ class App extends Component {
                     key="sub3"
                     title={
                       <span>
-                        <Icon type="notification" />subnav 3
+                        <Icon type="notification" />
+                        subnav 3
                       </span>
                     }
                   >
@@ -235,11 +296,8 @@ class App extends Component {
                               Change Theme
                             </Button>
                           </Col> */}
-                          <Col xs={24} style={{ marginTop: '10px' }}>
-                            <Button
-                              type="primary"
-                              onClick={this.resetTheme}
-                            >
+                          <Col xs={24} style={{ marginTop: "10px" }}>
+                            <Button type="primary" onClick={this.resetTheme}>
                               Reset Theme
                             </Button>
                           </Col>
@@ -307,6 +365,58 @@ class App extends Component {
                             )}
                           </FormItem>
                           <Progress percent={60} />
+                          <Row
+                            type="flex"
+                            justify="center"
+                            className="secondary-color"
+                          >
+                            <div>
+                              <Card
+                                title="Default size card"
+                                extra={<a href="#">More</a>}
+                                style={{ width: 300 }}
+                              >
+                                <p>Card content</p>
+                                <p>Card content</p>
+                                <p>Card content</p>
+                              </Card>
+                              <Card
+                                size="small"
+                                title="Small size card"
+                                extra={<a href="#">More</a>}
+                                style={{ width: 300 }}
+                              >
+                                <p>Card content</p>
+                                <p>Card content</p>
+                                <p>Card content</p>
+                              </Card>
+                            </div>
+                          </Row>
+                          <Row
+                            type="flex"
+                            justify="center"
+                            className="secondary-color"
+                          >
+                            <List
+                              itemLayout="horizontal"
+                              dataSource={listData}
+                              renderItem={item => (
+                                <List.Item>
+                                  <List.Item.Meta
+                                    avatar={
+                                      <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+                                    }
+                                    title={
+                                      <a href="https://ant.design">
+                                        {item.title}
+                                      </a>
+                                    }
+                                    description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+                                  />
+                                </List.Item>
+                              )}
+                            />
+                          </Row>
                         </Col>
                         <Col xs={24} sm={12}>
                           <FormItem {...formItemLayout} label="Date">
@@ -336,9 +446,56 @@ class App extends Component {
                               Submit
                             </Button>
                           </FormItem>
-                          <Row type="flex" justify="center" className="secondary-color">
-                            color : @secondary-color;
+                          <Row
+                            type="flex"
+                            justify="center"
+                            className="secondary-color"
+                          >
+                            <Dropdown overlay={menu}>
+                              <a className="ant-dropdown-link" href="#">
+                                Hover me <Icon type="down" />
+                              </a>
+                            </Dropdown>
                           </Row>
+                          <Row
+                            type="flex"
+                            justify="center"
+                            className="secondary-color"
+                          >
+                            <Pagination defaultCurrent={1} total={50} />
+                          </Row>
+                          <Row
+                            type="flex"
+                            justify="center"
+                            className="secondary-color"
+                          >
+                            <Checkbox>Checkbox</Checkbox>
+                          </Row>
+                          <Row
+                            type="flex"
+                            justify="center"
+                            className="secondary-color"
+                          >
+                            <div>
+                              <Badge count={5}>
+                                <a href="#" className="head-example" />
+                              </Badge>
+                              <Badge count={0} showZero>
+                                <a href="#" className="head-example" />
+                              </Badge>
+                              <Badge
+                                count={
+                                  <Icon
+                                    type="clock-circle"
+                                    style={{ color: "#f5222d" }}
+                                  />
+                                }
+                              >
+                                <a href="#" className="head-example" />
+                              </Badge>
+                            </div>
+                          </Row>
+                          
                         </Col>
                       </Form>
                     </Col>
