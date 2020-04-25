@@ -111,6 +111,9 @@ const reducePlugin = postcss.plugin("reducePlugin", () => {
       if(decl.prop.includes("background-image")) {
         decl.remove();
       }
+      if(String(decl.value).match(/url\(.*\)/g)) {
+        decl.remove();
+      }
       if (
         !decl.prop.includes("color") &&
         !decl.prop.includes("background") &&
