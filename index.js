@@ -331,7 +331,7 @@ function generateTheme({
       })
       .then(([mappings, colorsLess]) => {
         let css = "";
-        themeVars = themeVars.filter(name => name in mappings);
+        themeVars = themeVars.filter(name => name in mappings && !name.match(/(.*)-(\d)/));
         themeVars.forEach(varName => {
           const color = mappings[varName];
           css = `.${varName.replace("@", "")} { color: ${color}; }\n ${css}`;

@@ -1,19 +1,23 @@
 {
   "name": "antd-theme-generator",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "This a script to generate color specific styles less file and which you can use to change theme dynamically in browser",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@ant-design/icons": "^4.0.6",
+    "antd": "^4.1.5",
+    "antd-theme-generator": "^1.2.1",
     "glob": "^7.1.3",
     "hash.js": "^1.1.5",
     "less": "^3.9.0",
     "less-bundle-promise": "1.0.7",
     "less-plugin-npm-import": "^2.1.0",
     "postcss": "^6.0.21",
-    "postcss-colors-only": "0.0.3"
+    "postcss-colors-only": "0.0.3",
+    "react-color": "^2.18.0"
   },
   "keywords": [
     "antd",

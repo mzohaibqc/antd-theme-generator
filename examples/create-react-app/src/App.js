@@ -26,6 +26,7 @@ import {
 import moment from "moment";
 
 import ColorPicker from "./ColorPicker";
+import './styles/main.less';
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -38,7 +39,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     let initialValue = {
-      "@primary-color": "#1987a7",
+      "@primary-color": "#00375B",
       "@secondary-color": "#0000ff",
       "@text-color": "#000000",
       "@text-color-secondary": "#eb2f96",
@@ -58,7 +59,7 @@ class App extends Component {
       this.state = { vars, initialValue };
       window.less
         .modifyVars(vars)
-        .then(() => {})
+        .then(() => { })
         .catch(error => {
           message.error(`Failed to update theme`);
         });
@@ -365,58 +366,6 @@ class App extends Component {
                             )}
                           </FormItem>
                           <Progress percent={60} />
-                          <Row
-                            type="flex"
-                            justify="center"
-                            className="secondary-color"
-                          >
-                            <div>
-                              <Card
-                                title="Default size card"
-                                extra={<a href="#">More</a>}
-                                style={{ width: 300 }}
-                              >
-                                <p>Card content</p>
-                                <p>Card content</p>
-                                <p>Card content</p>
-                              </Card>
-                              <Card
-                                size="small"
-                                title="Small size card"
-                                extra={<a href="#">More</a>}
-                                style={{ width: 300 }}
-                              >
-                                <p>Card content</p>
-                                <p>Card content</p>
-                                <p>Card content</p>
-                              </Card>
-                            </div>
-                          </Row>
-                          <Row
-                            type="flex"
-                            justify="center"
-                            className="secondary-color"
-                          >
-                            <List
-                              itemLayout="horizontal"
-                              dataSource={listData}
-                              renderItem={item => (
-                                <List.Item>
-                                  <List.Item.Meta
-                                    avatar={
-                                      <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-                                    }
-                                    title={
-                                      <a href="https://ant.design">
-                                        {item.title}
-                                      </a>
-                                    }
-                                    description="Ant Design, a design language for background applications, is refined by Ant UED Team"
-                                  />
-                                </List.Item>
-                              )}
-                            />
-                          </Row>
                         </Col>
                         <Col xs={24} sm={12}>
                           <FormItem {...formItemLayout} label="Date">
@@ -446,58 +395,118 @@ class App extends Component {
                               Submit
                             </Button>
                           </FormItem>
-                          <Row
-                            type="flex"
-                            justify="center"
-                            className="secondary-color"
-                          >
-                            <Dropdown overlay={menu}>
-                              <a className="ant-dropdown-link" href="#">
-                                Hover me <Icon type="down" />
-                              </a>
-                            </Dropdown>
-                          </Row>
-                          <Row
-                            type="flex"
-                            justify="center"
-                            className="secondary-color"
-                          >
-                            <Pagination defaultCurrent={1} total={50} />
-                          </Row>
-                          <Row
-                            type="flex"
-                            justify="center"
-                            className="secondary-color"
-                          >
-                            <Checkbox>Checkbox</Checkbox>
-                          </Row>
-                          <Row
-                            type="flex"
-                            justify="center"
-                            className="secondary-color"
-                          >
-                            <div>
-                              <Badge count={5}>
-                                <a href="#" className="head-example" />
-                              </Badge>
-                              <Badge count={0} showZero>
-                                <a href="#" className="head-example" />
-                              </Badge>
-                              <Badge
-                                count={
-                                  <Icon
-                                    type="clock-circle"
-                                    style={{ color: "#f5222d" }}
-                                  />
-                                }
-                              >
-                                <a href="#" className="head-example" />
-                              </Badge>
-                            </div>
-                          </Row>
-                          
+
+
+
                         </Col>
                       </Form>
+                    </Col>
+                  </Row>
+                  <Row
+                    type="flex"
+                    justify="left"
+                    className="secondary-color"
+                  >
+                    <Col xs={24} sm={6}>
+                      <Card
+                        title="Default size card"
+                        extra={<a href="#">More</a>}
+                        style={{ width: 300 }}
+                      >
+                        <p>Card content</p>
+                        <p>Card content</p>
+                        <p>Card content</p>
+                      </Card>
+                      <Card
+                        size="small"
+                        title="Small size card"
+                        extra={<a href="#">More</a>}
+                        style={{ width: 300 }}
+                      >
+                        <p>Card content</p>
+                        <p>Card content</p>
+                        <p>Card content</p>
+                      </Card>
+                    </Col>
+                    <Col xs={24} sm={6}>
+                      <Row
+                        type="flex"
+                        justify="left"
+                        className="secondary-color"
+                      >
+                        <List
+                          itemLayout="horizontal"
+                          dataSource={listData}
+                          renderItem={item => (
+                            <List.Item>
+                              <List.Item.Meta
+                                avatar={
+                                  <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+                                }
+                                title={
+                                  <a href="https://ant.design">
+                                    {item.title}
+                                  </a>
+                                }
+                                description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+                              />
+                            </List.Item>
+                          )}
+                        />
+                      </Row>
+                    </Col>
+                    <Col xs={24} sm={6}>
+                      <Row
+                        type="flex"
+                        justify="left"
+                        className="secondary-color component-container"
+                      >
+                        <Dropdown overlay={menu}>
+                          <a className="ant-dropdown-link" href="#">
+                            Hover me <Icon type="down" />
+                          </a>
+                        </Dropdown>
+                      </Row>
+                      <Row
+                        type="flex"
+                        justify="left"
+                        className="secondary-color component-container"
+                      >
+                        <Pagination defaultCurrent={1} total={50} />
+                      </Row>
+                      <Row
+                        type="flex"
+                        justify="left"
+                        className="secondary-color component-container"
+                      >
+                        <Checkbox>Checkbox</Checkbox>
+                      </Row>
+                    </Col>
+                    <Col xs={24} sm={6}>
+                      <Row
+                        type="flex"
+                        justify="left"
+                        className="secondary-color"
+                      >
+                        <div>
+                          <Badge count={5}>
+                            <a href="#" className="head-example" />
+                          </Badge>
+                          <Badge count={0} showZero>
+                            <a href="#" className="head-example" />
+                          </Badge>
+                          <Badge
+                            count={
+                              <Icon
+                                type="clock-circle"
+                                style={{ color: "#f5222d" }}
+                              />
+                            }
+                          >
+                            <a href="#" className="head-example" />
+                          </Badge>
+                        </div>
+                      </Row>
                     </Col>
                   </Row>
                 </Content>
