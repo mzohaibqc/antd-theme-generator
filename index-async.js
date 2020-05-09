@@ -7,8 +7,6 @@ const bundle = require("less-bundle-promise");
 const hash = require("hash.js");
 const NpmImportPlugin = require('less-plugin-npm-import');
 const colorsOnly = require('postcss-colors-only');
-const stripCssComments = require('strip-css-comments');
-// const comments = require('postcss-discard-comments');
 
 const options = {
   withoutGrey: true, // set to true to remove rules that only have grey colors
@@ -19,8 +17,7 @@ let hashCache = "";
 let cssCache = "";
 
 function randomColor() {
-  // return '#' + (Math.random() * 0xFFFFFF << 0).toString(16);
-  return '#' + (0x1000000 + (Math.random()) * 0xffffff).toString(16).substr(1, 6);
+  return '#' + (Math.random() * 0xFFFFFF << 0).toString(16);
 }
 
 /*
@@ -111,10 +108,10 @@ const reducePlugin = postcss.plugin("reducePlugin", () => {
     }
     let removeRule = true;
     rule.walkDecls(decl => {
-      if (decl.prop.includes("background-image")) {
+      if(decl.prop.includes("background-image")) {
         decl.remove();
       }
-      if (String(decl.value).match(/url\(.*\)/g)) {
+      if(String(decl.value).match(/url\(.*\)/g)) {
         decl.remove();
       }
       if (
@@ -236,45 +233,28 @@ function isValidColor(color, customColorRegexArray = []) {
   return false;
 }
 
-async function compileAllLessFilesToCss(stylesDir, antdStylesDir, varMap = {}) {
-  /* 
-    Get all less files path in styles directory
-    and then compile all to css and join
-  */
+function getCssModulesStyles(stylesDir, antdStylesDir) {
   const styles = glob.sync(path.join(stylesDir, './**/*.less'));
-  const csss = await Promise.all(
-    styles.map(filePath => {
-      let fileContent = fs.readFileSync(filePath).toString();
-      Object.keys(varMap).forEach(varName => {
-        fileContent = fileContent.replace(new RegExp(varName, 'g'), varMap[varName]);
-      });
-      return less
-        .render(fileContent, {
+  return Promise.all(
+    styles.map(p =>
+      less
+        .render(fs.readFileSync(p).toString(), {
           paths: [
             stylesDir,
             antdStylesDir,
           ],
-          filename: path.resolve(filePath),
+          filename: path.resolve(p),
           javascriptEnabled: true,
           plugins: [new NpmImportPlugin({ prefix: '~' })],
         })
-        .catch(() => '\n');
-    }
-
+        .catch(() => '\n')
     )
-  );
-  const hashes = {};
-
-  return csss.map(c => {
-    const css = stripCssComments(c.css || '', { preserve: false });
-    const hashCode = hash.sha256().update(css).digest('hex');
-    if (hashCode in hashes) {
+  )
+    .then(csss => csss.map(c => c.css).join('\n'))
+    .catch(err => {
+      console.log('Error', err);
       return '';
-    } else {
-      hashes[hashCode] = hashCode;
-      return css;
-    }
-  }).join('\n')
+    });
 }
 
 /*
@@ -282,7 +262,7 @@ async function compileAllLessFilesToCss(stylesDir, antdStylesDir, varMap = {}) {
   related css rules based on Ant Design styles and your own custom styles
   By default color.less will be generated in /public directory
 */
-async function generateTheme({
+function generateTheme({
   antDir,
   antdStylesDir,
   stylesDir,
@@ -293,148 +273,146 @@ async function generateTheme({
   themeVariables = ['@primary-color'],
   customColorRegexArray = []
 }) {
-  let antdPath;
-  if (antdStylesDir) {
-    antdPath = antdStylesDir;
-  } else {
-    antdPath = path.join(antDir, 'lib');
-  }
-  // const entry = path.join(antdPath, './style/index.less');
-  // const styles = glob.sync(path.join(antdPath, './*/style/index.less'));
+  return new Promise((resolve, reject) => {
+    /*
+    Ant Design Specific Files (Change according to your project structure)
+    You can even use different less based css framework and create color.less for  that
   
-  const antdStylesFile = path.join(antDir, './dist/antd.less'); //path.join(antdPath, './style/index.less');
-  console.log(': -----------------------------')
-  console.log('antdStylesFile', antdStylesFile)
-  console.log(': -----------------------------')
-  /*
-    You own custom styles (Change according to your project structure)
-    
-    - stylesDir - styles directory containing all less files 
-    - mainLessFile - less main file which imports all other custom styles
-    - varFile - variable file containing ant design specific and your own custom variables
+    - antDir - ant design instalation path
+    - entry - Ant Design less main file / entry file
+    - styles - Ant Design less styles for each component
   */
-  varFile = varFile || path.join(antdPath, "./style/themes/default.less");
-
-  // let content = fs.readFileSync(entry).toString();
-  // content += "\n";
-  // styles.forEach(style => {
-  //   content += `@import "${style}";\n`;
-  // });
-  // if (mainLessFile) {
-  //   const customStyles = fs.readFileSync(mainLessFile).toString();
-  //   content += `\n${customStyles}`;
-  // }
-  // const hashCode = hash.sha256().update(content).digest('hex');
-  // if (hashCode === hashCache) {
-  //   resolve(cssCache);
-  //   return;
-  // }
-  // hashCache = hashCode;
-  let themeCompiledVars = {};
-  let themeVars = themeVariables || ["@primary-color"];
-  const lessPaths = [
-    path.join(antdPath, "./style"),
-    stylesDir
-  ];
-
-  const randomColors = {};
-  const randomColorsVars = {};
-  /*
-  Ant Design Specific Files (Change according to your project structure)
-  You can even use different less based css framework and create color.less for  that
- 
-  - antDir - ant design instalation path
-  - entry - Ant Design less main file / entry file
-  - styles - Ant Design less styles for each component
-
-  1. Bundle all variables into one file
-  2. process vars and create a color name, color value key value map
-  3. Get variables which are part of theme
-  4. 
-*/
-
-
-
-  const varFileContent = await bundle({ src: varFile });
-  const mappings = Object.assign(generateColorMap(varFileContent, customColorRegexArray), generateColorMap(mainLessFile, customColorRegexArray));
-  let css = "";
-  themeVars = themeVars.filter(name => name in mappings && !name.match(/(.*)-(\d)/));
-  themeVars.forEach(varName => {
-    const color = randomColor();
-    randomColors[varName] = color;
-    randomColorsVars[color] = varName;
-    css = `.${varName.replace("@", "")} { color: ${color}; }\n ${css}`;
-  });
-
-  themeVars.forEach(varName => {
-    [1, 2, 3, 4, 5, 7].forEach(key => {
-      let name = varName === '@primary-color' ? `@primary-${key}` : `${varName}-${key}`;
-      css = `.${name.replace("@", "")} { color: ${getShade(name)}; }\n ${css}`;
-    });
-  });
-
-  css = `${varFileContent}\n${css}`;
-  let results = await render(css, lessPaths);
-  css = results.css;
-  css = css.replace(/(\/.*\/)/g, "");
-  const regex = /.(?=\S*['-])([.a-zA-Z0-9'-]+)\ {\n\ \ color:\ (.*);/g;
-  themeCompiledVars = getMatches(css, regex);
-
-  // Convert all custom user less files to css
-  const userCustomCss = await compileAllLessFilesToCss(stylesDir, antdStylesDir, themeCompiledVars);
-
-  let antLessContent = fs.readFileSync(antdStylesFile).toString();
-  let varsCombined = '';
-  themeVars.forEach(varName => {
-    varsCombined = `${varsCombined}\n${varName}: ${themeCompiledVars[varName]};`;
-  });
-  antLessContent = `${antLessContent}\n${varsCombined}`;
-  const { css: antCss } = await render(antLessContent, [antdPath, antdStylesDir]);
-  const allCss = `${antCss}\n${userCustomCss}`;
-  results = await postcss([reducePlugin])
-    // return postcss.use(colorsOnly(options))
-    .process(allCss, {
-      parser: less.parser,
-      // from: entry
-    });
-  css = results.css;
-
-  Object.keys(themeCompiledVars).forEach(varName => {
-    let color;
-    if (/(.*)-(\d)/.test(varName)) {
-      color = themeCompiledVars[varName];
-      varName = getShade(varName);
+    let antdPath;
+    if (antdStylesDir) {
+      antdPath = antdStylesDir;
     } else {
-      color = themeCompiledVars[varName];
+      antdPath = path.join(antDir, 'lib');
     }
-    color = color.replace('(', '\\(').replace(')', '\\)');
-    // css = css.replace(new RegExp(`${color}`, "g"), varName); // Fixed bug https://github.com/mzohaibqc/antd-theme-webpack-plugin/issues/25
-    css = css.replace(new RegExp(`${color}` + ' *;', "g"), `${varName};`);
+    const entry = path.join(antdPath, './style/index.less');
+    const styles = glob.sync(path.join(antdPath, './*/style/index.less'));
+
+    /*
+      You own custom styles (Change according to your project structure)
+      
+      - stylesDir - styles directory containing all less files 
+      - mainLessFile - less main file which imports all other custom styles
+      - varFile - variable file containing ant design specific and your own custom variables
+    */
+    varFile = varFile || path.join(antdPath, "./style/themes/default.less");
+
+    let content = fs.readFileSync(entry).toString();
+    content += "\n";
+    styles.forEach(style => {
+      content += `@import "${style}";\n`;
+    });
+    if (mainLessFile) {
+      const customStyles = fs.readFileSync(mainLessFile).toString();
+      content += `\n${customStyles}`;
+    }
+    const hashCode = hash.sha256().update(content).digest('hex');
+    if(hashCode === hashCache){
+      resolve(cssCache);
+      return;
+    }
+    hashCache = hashCode;
+    let themeCompiledVars = {};
+    let themeVars = themeVariables || ["@primary-color"];
+    const lessPaths = [
+      path.join(antdPath, "./style"),
+      stylesDir
+    ];
+
+    return bundle({
+      src: varFile
+    })
+      .then(colorsLess => {
+        const mappings = Object.assign(generateColorMap(colorsLess, customColorRegexArray), generateColorMap(mainLessFile, customColorRegexArray));
+        return [mappings, colorsLess];
+      })
+      .then(([mappings, colorsLess]) => {
+        let css = "";
+        themeVars = themeVars.filter(name => name in mappings && !name.match(/(.*)-(\d)/));
+        themeVars.forEach(varName => {
+          const color = mappings[varName];
+          css = `.${varName.replace("@", "")} { color: ${color}; }\n ${css}`;
+        });
+
+        themeVars.forEach(varName => {
+          [1, 2, 3, 4, 5, 7].forEach(key => {
+            let name = varName === '@primary-color' ? `@primary-${key}` : `${varName}-${key}`;
+            css = `.${name.replace("@", "")} { color: ${getShade(name)}; }\n ${css}`;
+          });
+        });
+
+        css = `${colorsLess}\n${css}`;
+        return render(css, lessPaths).then(({ css }) => [
+          css,
+          mappings,
+          colorsLess
+        ]);
+      })
+      .then(([css, mappings, colorsLess]) => {
+        css = css.replace(/(\/.*\/)/g, "");
+        const regex = /.(?=\S*['-])([.a-zA-Z0-9'-]+)\ {\n\ \ color:\ (.*);/g;
+        themeCompiledVars = getMatches(css, regex);
+        content = `${content}\n${colorsLess}`;
+        return render(content, lessPaths).then(({ css }) => {
+          return getCssModulesStyles(stylesDir, antdStylesDir).then(customCss => {
+            return [
+              `${customCss}\n${css}`,
+              mappings,
+              colorsLess
+            ];
+          })
+          
+        });
+      })
+      .then(([css, mappings, colorsLess]) => {
+        return postcss([reducePlugin])
+        // return postcss.use(colorsOnly(options))
+          .process(css, {
+            parser: less.parser,
+            from: entry
+          })
+          .then(({ css }) => [css, mappings, colorsLess]);
+      })
+      .then(([css, mappings, colorsLess]) => {
+        Object.keys(themeCompiledVars).forEach(varName => {
+          let color;
+          if (/(.*)-(\d)/.test(varName)) {
+            color = themeCompiledVars[varName];
+            varName = getShade(varName);
+          } else {
+            color = themeCompiledVars[varName];
+          }
+          color = color.replace('(', '\\(').replace(')', '\\)');
+          // css = css.replace(new RegExp(`${color}`, "g"), varName); // Fixed bug https://github.com/mzohaibqc/antd-theme-webpack-plugin/issues/25
+          css = css.replace(new RegExp(`${color}` + ' *;', "g"), `${varName};`);
+        });
+
+        css = `${colorsLess}\n${css}`;
+
+        themeVars.reverse().forEach(varName => {
+          css = css.replace(new RegExp(`${varName}(\ *):(.*);`, 'g'), '');
+          css = `${varName}: ${mappings[varName]};\n${css}\n`;
+        });
+        css = css.replace(/\\9/g, '');
+        if (outputFilePath) {
+          fs.writeFileSync(outputFilePath, css);
+          console.log(
+            `🌈 Theme generated successfully. OutputFile: ${outputFilePath}`
+          );
+        } else {
+          console.log(`Theme generated successfully`);
+        }
+        cssCache = css;
+        return resolve(css);
+      })
+      .catch(err => {
+        console.log("Error", err);
+        reject(err);
+      });
   });
-
-
-
-  css = `${varFileContent}\n${css}`;
-
-  themeVars.reverse().forEach(varName => {
-    css = css.replace(new RegExp(`${varName}(\ *):(.*);`, 'g'), '');
-    css = `${varName}: ${mappings[varName]};\n${css}\n`;
-  });
-
-  css = css.replace(/\\9/g, '');
-  console.log(': ---------------------------')
-  // console.log('generateColorMap -> css', css)
-  console.log(': ---------------------------')
-  if (outputFilePath) {
-    fs.writeFileSync(outputFilePath, css);
-    console.log(
-      `🌈 Theme generated successfully. OutputFile: ${outputFilePath}`
-    );
-  } else {
-    console.log(`Theme generated successfully`);
-  }
-  cssCache = css;
-  return cssCache;
 }
 
 module.exports = {

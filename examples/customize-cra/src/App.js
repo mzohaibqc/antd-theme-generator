@@ -143,7 +143,7 @@ class App extends Component {
 
   render() {
     const colorPickerOptions = ["@primary-color","@secondary-color","@text-color","@text-color-secondary","@heading-color","@layout-header-background","@btn-primary-bg"];
-    const colorPickers = Object.keys(this.state.vars).filter(name => colorPickerOptions.indexOf(name) > -1).map(varName =>
+    const colorPickers = Array.from(new Set(Object.keys(this.state.vars).concat(colorPickerOptions))).filter(name => colorPickerOptions.indexOf(name) > -1).map(varName =>
       this.getColorPicker(varName)
     );
     const formItemLayout = {

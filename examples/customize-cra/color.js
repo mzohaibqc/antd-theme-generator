@@ -1,6 +1,6 @@
 const path = require('path');
 const fs = require('fs');
-const { generateTheme, getLessVars } = require('antd-theme-generator');
+const { generateTheme, getLessVars } = require('../../index');
 
 const defaultVars = getLessVars('./node_modules/antd/lib/style/themes/default.less')
 const darkVars = { ...getLessVars('./node_modules/antd/lib/style/themes/dark.less'), '@primary-color': defaultVars['@primary-color'] };
@@ -19,12 +19,12 @@ const options = {
     '@secondary-color',
     '@text-color',
     '@text-color-secondary',
-    '@heading-color',
-    '@layout-body-background',
-    '@btn-primary-bg',
-    '@layout-header-background',
-    '@border-color-base',
-    '@white',
+    // '@heading-color',
+    // '@layout-body-background',
+    // '@btn-primary-bg',
+    // '@layout-header-background',
+    // '@border-color-base',
+    // '@white',
     ...Object.keys(darkVars),
     ...Object.keys(lightVars)
   ])),

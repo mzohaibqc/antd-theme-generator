@@ -17,7 +17,8 @@
     "less-plugin-npm-import": "^2.1.0",
     "postcss": "^6.0.21",
     "postcss-colors-only": "0.0.3",
-    "react-color": "^2.18.0"
+    "react-color": "^2.18.0",
+    "strip-css-comments": "^4.1.0"
   },
   "keywords": [
     "antd",
