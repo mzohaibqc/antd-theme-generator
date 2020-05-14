@@ -25,11 +25,11 @@ import {
 } from "antd";
 
 import { LaptopOutlined, UserOutlined, NotificationOutlined, UploadOutlined, ClockCircleOutlined, DownOutlined } from '@ant-design/icons';
-import moment from "moment";
 
 import ColorPicker from "./ColorPicker";
 import darkVars from './dark.json';
 import lightVars from './light.json';
+import themeVars from './theme.json';
 import './styles/main.less';
 
 const { SubMenu } = Menu;
@@ -142,7 +142,7 @@ class App extends Component {
   };
 
   render() {
-    const colorPickerOptions = ["@primary-color","@secondary-color","@text-color","@text-color-secondary","@heading-color","@layout-header-background","@btn-primary-bg"];
+    const colorPickerOptions = Object.keys(themeVars);
     const colorPickers = Array.from(new Set(Object.keys(this.state.vars).concat(colorPickerOptions))).filter(name => colorPickerOptions.indexOf(name) > -1).map(varName =>
       this.getColorPicker(varName)
     );
@@ -296,8 +296,16 @@ class App extends Component {
                             placeholder="Please select theme"
                             onSelect={value => {
                               let vars = value === 'light' ? lightVars : darkVars;
-                              vars = { ...vars, '@white': '#fff', '@black': '#000'};
-                              this.setState({ vars });
+                              vars = { ...vars};
+                              if (value === 'light') {
+                                vars['@select-item-selected-option-color'] = vars['@text-color'];
+                              } else {
+                                vars['@select-item-selected-option-color'] = vars['@primary-color'];
+                              }
+                              this.setState({ vars: { ...vars} });
+                              console.log(': --------------------------')
+                              console.log('App -> render -> vars', vars)
+                              console.log(': --------------------------')
                               window.less.modifyVars(vars).catch(error => {
                                 message.error(`Failed to reset theme`);
                                 this.setState({ vars });

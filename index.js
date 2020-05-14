@@ -9,7 +9,7 @@ const NpmImportPlugin = require('less-plugin-npm-import');
 const colorsOnly = require('postcss-colors-only');
 const stripCssComments = require('strip-css-comments');
 const syntax = require('postcss-less');
-const { gzip, ungzip} = require('node-gzip');
+const lessToJs = require('less-vars-to-js');
 
 const options = {
   withoutGrey: true, // set to true to remove rules that only have grey colors
@@ -220,6 +220,7 @@ function getShade(varName) {
   isValidColor('20px'); //false
 */
 function isValidColor(color, customColorRegexArray = []) {
+  if (color && color.includes('rgb')) return true;
   if (!color || color.match(/px/g)) return false;
   if (color.match(/colorPalette|fade/g)) return true;
   if (color.charAt(0) === "#") {
@@ -355,16 +356,10 @@ async function generateTheme({
 */
 
 
-
-  const varFileContent = await bundle({ src: varFile });
-  const colorFileContent = await bundle({ src: path.join(antdPath, "./style/color/colors.less") });
-  const colorPalettePath = path.join(antdPath, "./style/color/colorPalette.less");
-  console.log(': ---------------------------------')
-  console.log('colorPalettePath', colorPalettePath)
-  console.log(': ---------------------------------')
-  
-  let colorPeletteContent = await bundle({ src: colorPalettePath });
-  const mappings = Object.assign(generateColorMap(varFileContent, customColorRegexArray), generateColorMap(mainLessFile, customColorRegexArray));
+  const varFileContent = combineLess(varFile);
+  const colorFileContent = combineLess(path.join(antdPath, "./style/color/colors.less"));
+  customColorRegexArray = [...customColorRegexArray, ...['color', 'lighten', 'darken', 'saturate', 'desaturate', 'fadein', 'fadeout', 'fade', 'spin', 'mix', 'hsv'].map(name => new RegExp(`${name}\(.*\)`))];
+  let mappings = Object.assign(generateColorMap(varFileContent, customColorRegexArray), getLessVars(varFile));
   let css = "";
   themeVars = themeVars.filter(name => name in mappings && !name.match(/(.*)-(\d)/));
   themeVars.forEach(varName => {
@@ -393,15 +388,8 @@ async function generateTheme({
   // Convert all custom user less files to css
   const userCustomCss = await compileAllLessFilesToCss(stylesDir, antdStylesDir, themeCompiledVars);
 
-  let antLessContent = `@import "../lib/style/components.less";` //fs.readFileSync(antdStylesFile).toString();
+  let antLessContent = `@import "../lib/style/components.less";`
   let varsCombined = '';
-  // themeVars.forEach(varName => {
-  console.log(': -------------------')
-  console.log('themeVars', themeVars.includes('@btn-group-border'), themeVars.includes('@primary-5'))
-  console.log(': -------------------')
-  //   varsCombined = `${varsCombined}\n${varName}: ${themeCompiledVars[varName]};`;
-  // });
-  // Object.keys(themeCompiledVars).forEach(varName => {
   themeVars.forEach(varName => {
     if (/(.*)-(\d)/.test(varName)) {
       color = getShade(varName);
@@ -411,21 +399,16 @@ async function generateTheme({
     }
     varsCombined = `${varsCombined}\n${varName}: ${color};`;
   });
-    console.log(': -------------------------')
-    console.log('varsCombined', varsCombined)
-    console.log(': -------------------------')
+
   antLessContent = `${colorFileContent}\n@import "../lib/style/index.less";\n${varsCombined}\n${antLessContent}`;
-  console.log(': -----------------------------')
-  // console.log('antLessContent', antLessContent)
-  console.log(': -----------------------------')
+
   const { css: antCss } = await render(antLessContent, [antdPath, antdStylesDir]);
-  fs.writeFileSync('./ant.css', antCss);
   const allCss = `${antCss}\n${userCustomCss}`;
   results = await postcss([reducePlugin])
     // return postcss.use(colorsOnly(options))
     .process(allCss, {
       parser: less.parser,
-      // from: entry
+      from: entry
     });
   css = results.css;
 
@@ -442,75 +425,16 @@ async function generateTheme({
     // css = css.replace(new RegExp(`${color}`, "g"), varName); // Fixed bug https://github.com/mzohaibqc/antd-theme-webpack-plugin/issues/25
     css = css.replace(new RegExp(`${color}` + ' *;', "g"), `${varName};`);
   });
-
-  // Removed all those rule which don't contain color variables since those can't be modified in browser using less.modifyVars()
-  // css = await postcss([removeColorCodesPlugin])
-  //   .process(css, { syntax })
-  //   .then(({ css}) => css);
-
-
-
-  // css = `${varFileContent}\n${css}`;
-  console.log(': -------')
-  console.log('css @comment-padding-base', colorPeletteContent.includes('@comment-padding-base'))
-  console.log(': -------')
-  // console.log('match', colorFileContent.match(/@[\w+-]+:\ (.*);/g));
   css = css.replace(new RegExp(`^@[\w+-]+:\ (.*);$`, 'g'), '');
-  colorPeletteContent = combineLess(path.join(antdPath, "./style/themes/default.less"))
-  console.log(': ---------------------------------------')
-  console.log('colorPeletteContent', colorPeletteContent)
-  console.log(': ---------------------------------------')
-  fs.writeFileSync('./colorPelette.less', colorPeletteContent);
-//   colorPeletteContent = `
-//   ${fs.readFileSync(path.join(antdPath, "./style/color/bezierEasing.less")).toString()}\n
-//   ${fs.readFileSync(path.join(antdPath, "./style/color/tinyColor.less")).toString()}\n
-//   ${fs.readFileSync(path.join(antdPath, "./style/color/colorPalette.less")).toString()
-//   .replace('@import "bezierEasing";', '')
-//   .replace('@import "tinyColor";', '')
-// }\n
-//   `;
 
-  
-
-  const topVars = themeVars.reverse().map(varName => {
-  return `${varName}: ${mappings[varName]};`;
-}).join('\n');
-console.log('topVars', topVars)
-  let requiredVars = '';
-  requiredVars += fs.readFileSync(path.join(antdPath, "./style/color/colors.less")).toString()
-    .split("\n")
-    .filter(line => line.startsWith("@") && line.indexOf(":") > -1)
-    .map(line => {
-      try {
-        const matches = line.match(
-          /(?=\S*['-])([@a-zA-Z0-9'-]+).*:[ ]{1,}(.*);/
-        );
-        return matches ? line + '\n': '';
-      } catch (e) {
-        return '';
-      }
-    }).join('');
-  requiredVars += fs.readFileSync(path.join(antdPath, "./style/themes/default.less")).toString()
-    .split("\n")
-    .map(line => {
-      return line.startsWith('//') || line.startsWith('/*') || line === '' || line.startsWith('@import')? '' : line + '\n';
-    }).join('');
-  console.log(': ---------------------------------------')
-  css = `${colorPeletteContent}\n${varsCombined}\n${css}`;
-
+  css = css.replace(/\\9/g, '');
+  css = `${css.trim()}\n${combineLess(path.join(antdPath, "./style/themes/default.less"))}`
 
   themeVars.reverse().forEach(varName => {
     css = css.replace(new RegExp(`${varName}(\ *):(.*);`, 'g'), '');
     css = `${varName}: ${mappings[varName]};\n${css}\n`;
   });
 
-  css = css.replace(/\\9/g, ''); //.replace(new RegExp('@black', 'g'), '#000000').replace(new RegExp('@white', 'g'), '#ffffff');
-  css = `
-  @white: #fff;
-  @black: #000;
-  ${requiredVars}
-  ${css}`
-  // css = await gzip(css);
   if (outputFilePath) {
     fs.writeFileSync(outputFilePath, css);
     console.log(
@@ -553,22 +477,61 @@ const removeColorCodesPlugin = postcss.plugin("removeColorCodesPlugin", () => {
 });
 
 function combineLess(filePath) {
-  console.log('combineLess -> filePath', filePath)
   let fileContent = fs.readFileSync(filePath).toString();
   const directory = path.dirname(filePath);
   return fileContent.split("\n")
-    // .filter(line => line.startsWith("@") && line.indexOf(":") > -1)
     .map(line => {
-    console.log(': ------------------------')
-    console.log('combineLess -> line', line)
-    console.log(': ------------------------', line.match(/@import\ ["'](.*)["'];/))
       if (line.startsWith('@import')) {
         let importPath = line.match(/@import\ ["'](.*)["'];/)[1];
         if (!importPath.endsWith('.less')) {
           importPath += '.less';
         }
-        return combineLess(path.join(directory, importPath))
+        let newPath = path.join(directory, importPath)
+        if (importPath.startsWith('~')) {
+          importPath = importPath.replace('~', '');
+          const moduleName = importPath.slice(0, importPath.indexOf('/'));
+          const modulePath = require.resolve(moduleName);
+          newPath = path.join(modulePath.slice(0, modulePath.indexOf('node_modules')), `./node_modules/${importPath}`);
+        }
+        return combineLess(newPath)
       }
       return line;
     }).join('\n');
+}
+
+function getColorVariables(content, customColorRegexArray = []) {
+  return content
+    .split("\n")
+    .filter(line => line.startsWith("@") && line.indexOf(":") > -1)
+    .reduce((prev, next) => {
+      try {
+        const matches = next.match(
+          /(?=\S*['-])([@a-zA-Z0-9'-]+).*:[ ]{1,}(.*);/
+        );
+        if (!matches) {
+          return prev;
+        }
+        let [, varName, color] = matches;
+        if (color && /^@[_\w+-]+$/.test(color)) {
+          let value = getColor(color, prev);
+          if (value === undefined) {
+            console.log('-----------------', varName, color, isValidColor(color, customColorRegexArray))
+            value = content.match(new RegExp(`${color}:\ (.*);`))[1];
+            console.log(': --------------------------------')
+            console.log('getColorVariables -> value', value)
+            console.log(': --------------------------------')
+          }
+          console.log('getColorVariables -> value', varName, color, value)
+          prev[color] = value;
+          if (!isValidColor(value, customColorRegexArray)) return prev;
+          prev[varName] = color;
+        } else if (isValidColor(color, customColorRegexArray)) {
+          prev[varName] = color;
+        }
+        return prev;
+      } catch (e) {
+        console.log("e", e);
+        return prev;
+      }
+    }, {});
 }

@@ -2,11 +2,13 @@ const path = require('path');
 const fs = require('fs');
 const { generateTheme, getLessVars } = require('../../index');
 
+const themeVariables = getLessVars(path.join(__dirname, './src/styles/vars.less'))
 const defaultVars = getLessVars('./node_modules/antd/lib/style/themes/default.less')
 const darkVars = { ...getLessVars('./node_modules/antd/lib/style/themes/dark.less'), '@primary-color': defaultVars['@primary-color'] };
 const lightVars = { ...getLessVars('./node_modules/antd/lib/style/themes/compact.less'), '@primary-color': defaultVars['@primary-color'] };
 fs.writeFileSync('./src/dark.json', JSON.stringify(darkVars));
 fs.writeFileSync('./src/light.json', JSON.stringify(lightVars));
+fs.writeFileSync('./src/theme.json', JSON.stringify(themeVariables));
 
 
 const options = {
@@ -15,16 +17,7 @@ const options = {
   varFile: path.join(__dirname, './src/styles/vars.less'),
   mainLessFile: path.join(__dirname, './src/styles/main.less'),
   themeVariables: Array.from(new Set([
-    '@primary-color',
-    '@secondary-color',
-    '@text-color',
-    '@text-color-secondary',
-    // '@heading-color',
-    // '@layout-body-background',
-    // '@btn-primary-bg',
-    // '@layout-header-background',
-    // '@border-color-base',
-    // '@white',
+    ...Object.keys(themeVariables),
     ...Object.keys(darkVars),
     ...Object.keys(lightVars)
   ])),
