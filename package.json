@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint --fix index.js",
-    "deploy": "gh-pages -d examples/customize-cra/build"
+    "deploy": "cd examples/customize-cra && npm run build && gh-pages -d build && cd ../../"
   },
   "dependencies": {
     "glob": "^7.1.3",
