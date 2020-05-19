@@ -17,7 +17,7 @@
     "react-scripts": "3.4.1"
   },
   "scripts": {
-    "start": "node color.js && EXTEND_ESLINT=true react-app-rewired start",
+    "start": "node color.js && react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject"

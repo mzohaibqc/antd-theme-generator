@@ -7,6 +7,7 @@ import {
   Select,
   message,
   Button,
+  Spin,
 } from "antd";
 import {
   ColorPreview,
@@ -92,11 +93,14 @@ class App extends Component {
       this.state = {
         vars, initialValue, size: 'default',
         disabled: false,
-        themeName
+        themeName,
+        themeApplied: false,
       };
       window.less
         .modifyVars(vars)
-        .then(() => { })
+        .then(() => { 
+          this.setState({ themeApplied: true });
+        })
         .catch(error => {
           message.error(`Failed to update theme`);
         });
@@ -183,7 +187,7 @@ class App extends Component {
   }
 
   render() {
-    const { collapsed, size, disabled } = this.state;
+    const { collapsed, size, disabled, themeApplied } = this.state;
     const colorPickerOptions = ["@primary-color", "@secondary-color", "@text-color", "@text-color-secondary", "@heading-color", "@layout-header-background", "@btn-primary-bg"];
     // const colorPickers = Object.keys(this.state.vars).filter(name => colorPickerOptions.indexOf(name) > -1).map((varName, index) =>
     const colorPickers = colorPickerOptions.map((varName, index) =>
@@ -194,6 +198,14 @@ class App extends Component {
       labelCol: { span: 24 },
       wrapperCol: { span: 24 }
     };
+
+    if (!themeApplied) {
+      return (
+        <Spin size="large">
+          <Layout className="app" />
+        </Spin>
+      )
+    }
     return (
       <Layout className="app">
         <Navbar />
