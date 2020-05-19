@@ -1,25 +1,25 @@
 {
   "files": {
     "main.css": "/antd-theme-generator/static/css/main.4552cdc5.chunk.css",
-    "main.js": "/antd-theme-generator/static/js/main.52bad903.chunk.js",
-    "main.js.map": "/antd-theme-generator/static/js/main.52bad903.chunk.js.map",
+    "main.js": "/antd-theme-generator/static/js/main.48347b37.chunk.js",
+    "main.js.map": "/antd-theme-generator/static/js/main.48347b37.chunk.js.map",
     "runtime-main.js": "/antd-theme-generator/static/js/runtime-main.a683703c.js",
     "runtime-main.js.map": "/antd-theme-generator/static/js/runtime-main.a683703c.js.map",
-    "static/css/2.e392defd.chunk.css": "/antd-theme-generator/static/css/2.e392defd.chunk.css",
-    "static/js/2.bac5a055.chunk.js": "/antd-theme-generator/static/js/2.bac5a055.chunk.js",
-    "static/js/2.bac5a055.chunk.js.map": "/antd-theme-generator/static/js/2.bac5a055.chunk.js.map",
+    "static/css/2.dd027c61.chunk.css": "/antd-theme-generator/static/css/2.dd027c61.chunk.css",
+    "static/js/2.7b37a1cb.chunk.js": "/antd-theme-generator/static/js/2.7b37a1cb.chunk.js",
+    "static/js/2.7b37a1cb.chunk.js.map": "/antd-theme-generator/static/js/2.7b37a1cb.chunk.js.map",
     "index.html": "/antd-theme-generator/index.html",
-    "precache-manifest.1fed5680dbb06ab50de8bd7529a4e1ea.js": "/antd-theme-generator/precache-manifest.1fed5680dbb06ab50de8bd7529a4e1ea.js",
+    "precache-manifest.a409ce0c7af0f8744f9453b7b4dc6c56.js": "/antd-theme-generator/precache-manifest.a409ce0c7af0f8744f9453b7b4dc6c56.js",
     "service-worker.js": "/antd-theme-generator/service-worker.js",
-    "static/css/2.e392defd.chunk.css.map": "/antd-theme-generator/static/css/2.e392defd.chunk.css.map",
+    "static/css/2.dd027c61.chunk.css.map": "/antd-theme-generator/static/css/2.dd027c61.chunk.css.map",
     "static/css/main.4552cdc5.chunk.css.map": "/antd-theme-generator/static/css/main.4552cdc5.chunk.css.map",
-    "static/js/2.bac5a055.chunk.js.LICENSE.txt": "/antd-theme-generator/static/js/2.bac5a055.chunk.js.LICENSE.txt"
+    "static/js/2.7b37a1cb.chunk.js.LICENSE.txt": "/antd-theme-generator/static/js/2.7b37a1cb.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.a683703c.js",
-    "static/css/2.e392defd.chunk.css",
-    "static/js/2.bac5a055.chunk.js",
+    "static/css/2.dd027c61.chunk.css",
+    "static/js/2.7b37a1cb.chunk.js",
     "static/css/main.4552cdc5.chunk.css",
-    "static/js/main.52bad903.chunk.js"
+    "static/js/main.48347b37.chunk.js"
   ]
 }
