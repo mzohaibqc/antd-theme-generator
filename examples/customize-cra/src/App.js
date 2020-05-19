@@ -1,49 +1,79 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import {
   Row,
   Col,
-  Icon,
-  Breadcrumb,
-  Menu,
   Layout,
   Form,
   Select,
-  Switch,
-  Radio,
-  Card,
   message,
   Button,
-  Upload,
-  DatePicker,
-  Progress,
-  Dropdown,
-  Pagination,
-  Checkbox,
-  Badge,
-  List,
-  Avatar
 } from "antd";
+import {
+  ColorPreview,
+  TypographyPreview,
+  ButtonPreview,
+  RadioPreview,
+  CheckboxPreview,
+  InputPreview,
+  SwitchPreview,
+  SliderPreview,
+  DatePickerPreview,
+  RatePreview,
+  TransferPreview,
+  TablePreview,
+  TagPreview,
+  ProgressPreview,
+  TreePreview,
+  PaginationPreview,
+  BadgePreview,
+  AlertPreview,
+  SpinPreview,
+  MessagePreview,
+  NotificationPreview,
+  TabsPreview,
+  MenuPreview,
+  TooltipPreview,
+  PopoverPreview,
+  CardPreview,
+  CarouselPreview,
+  CollapsePreview,
+  AvatarPreview,
+  DropdownPreview,
+  StepPreview,
+  CascaderPreview,
+  SelectPreview,
+  TreeSelectPreview,
+  TimePickerPreview,
+  CalendarPreview,
+  ListPreview,
+  TimelinePreview,
+  PopconfirmPreview,
+  ModalPreview,
+  FormPreview
+} from './previews';
 
-import { LaptopOutlined, UserOutlined, NotificationOutlined, UploadOutlined, ClockCircleOutlined, DownOutlined } from '@ant-design/icons';
 
+import {
+  MenuFoldOutlined, MenuUnfoldOutlined, CloseOutlined
+} from '@ant-design/icons';
+
+import Navbar from './Navbar';
 import ColorPicker from "./ColorPicker";
 import darkVars from './dark.json';
 import lightVars from './light.json';
-import themeVars from './theme.json';
 import './styles/main.less';
 
-const { SubMenu } = Menu;
-const { Header, Content, Sider } = Layout;
+// eslint-disable jsx-a11y/anchor-has-content
+const { Footer, Content, Sider } = Layout;
 const FormItem = Form.Item;
 const Option = Select.Option;
-const RadioButton = Radio.Button;
-const RadioGroup = Radio.Group;
 
 class App extends Component {
   constructor(props) {
     super(props);
     let initialValue = lightVars;
     let vars = {};
+    let themeName =  localStorage.getItem("theme-name") || 'light';
 
     try {
       vars = localStorage.getItem("app-theme");
@@ -55,11 +85,15 @@ class App extends Component {
           JSON.parse(vars)
         );
       }
-      
-    } catch(e) {
+
+    } catch (e) {
       vars = initialValue;
     } finally {
-      this.state = { vars, initialValue};
+      this.state = {
+        vars, initialValue, size: 'default',
+        disabled: false,
+        themeName
+      };
       window.less
         .modifyVars(vars)
         .then(() => { })
@@ -87,7 +121,7 @@ class App extends Component {
   onChangeComplete = (varName, color) => {
     const { vars } = this.state;
     vars[varName] = color;
-    this.setState({ vars: {...vars} });
+    this.setState({ vars: { ...vars } });
   };
   handleColorChange = (varname, color) => {
     const vars = { ...this.state.vars };
@@ -105,427 +139,170 @@ class App extends Component {
       });
   };
 
-  getColorPicker = varName => (
-    <Fragment key={varName}>
-      <Col xs={20}>{varName}</Col>
-      <Col xs={4}>
+  getColorPicker = (varName, position) => (
+    <Row className="color-row" key={`${varName}-${this.state.vars[varName]}`}>
+      <Col xs={4} className="color-palette">
         <ColorPicker
           type="sketch"
           small
           color={this.state.vars[varName]}
-          position="bottom"
+          position={position || 'right'}
           presetColors={[
-            "#F5222D",
-            "#FA541C",
-            "#FA8C16",
-            "#FAAD14",
-            "#FADB14",
-            "#A0D911",
-            "#52C41A",
-            "#13C2C2",
-            "#1890FF",
-            "#2F54EB",
-            "#722ED1",
-            "#EB2F96"
+            '#F5222D',
+            '#FA541C',
+            '#FA8C16',
+            '#FAAD14',
+            '#FADB14',
+            '#A0D911',
+            '#52C41A',
+            '#13C2C2',
+            '#1890FF',
+            '#2F54EB',
+            '#722ED1',
+            '#EB2F96'
           ]}
           onChangeComplete={color => this.handleColorChange(varName, color)}
         />
       </Col>
-    </Fragment>
+      <Col className="color-name" xs={20}>{varName}</Col>
+    </Row>
   );
   resetTheme = () => {
     localStorage.setItem("app-theme", "{}");
+    localStorage.setItem("theme-name", 'light');
+    this.setState({ themeName: 'light' });
     this.setState({ vars: this.state.initialValue });
     window.less.modifyVars(this.state.initialValue).catch(error => {
       message.error(`Failed to reset theme`);
     });
   };
 
+  onCollapse = collapsed => {
+    this.setState({ collapsed });
+    console.log('onCollapse', collapsed);
+  }
+
   render() {
-    const colorPickerOptions = Object.keys(themeVars);
-    const colorPickers = Array.from(new Set(Object.keys(this.state.vars).concat(colorPickerOptions))).filter(name => colorPickerOptions.indexOf(name) > -1).map(varName =>
-      this.getColorPicker(varName)
+    const { collapsed, size, disabled } = this.state;
+    const colorPickerOptions = ["@primary-color", "@secondary-color", "@text-color", "@text-color-secondary", "@heading-color", "@layout-header-background", "@btn-primary-bg"];
+    // const colorPickers = Object.keys(this.state.vars).filter(name => colorPickerOptions.indexOf(name) > -1).map((varName, index) =>
+    const colorPickers = colorPickerOptions.map((varName, index) =>
+      this.getColorPicker(varName, index > 3 ? 'top' : 'right')
     );
-    const formItemLayout = {
-      labelCol: { span: 6 },
-      wrapperCol: { span: 18 }
+
+    const themeLayout = {
+      labelCol: { span: 24 },
+      wrapperCol: { span: 24 }
     };
-
-    const listData = [
-      {
-        title: "Ant Design Title 1"
-      },
-      {
-        title: "Ant Design Title 2"
-      },
-      {
-        title: "Ant Design Title 3"
-      },
-      {
-        title: "Ant Design Title 4"
-      }
-    ];
-
-    const menu = (
-      <Menu>
-        <Menu.Item>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="http://www.alipay.com/"
-          >
-            1st menu item
-          </a>
-        </Menu.Item>
-        <Menu.Item>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="http://www.taobao.com/"
-          >
-            2nd menu item
-          </a>
-        </Menu.Item>
-        <Menu.Item>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="http://www.tmall.com/"
-          >
-            3rd menu item
-          </a>
-        </Menu.Item>
-      </Menu>
-    );
     return (
-      <div className="App">
-        <Row>
+      <Layout className="app">
+        <Navbar />
+        <Content className="content">
           <Layout>
-            <Header className="header">
-              <Row type="flex">
-                <Col xs={24} sm={6}>
-                  <div className="logo">Live Theme</div>
-                </Col>
-                <Col xs={0} sm={18}>
-                  <Menu
-                    theme="dark"
-                    mode="horizontal"
-                    defaultSelectedKeys={["1"]}
-                    style={{ lineHeight: "64px" }}
-                  >
-                    <Menu.Item key="1">nav 1</Menu.Item>
-                    <Menu.Item key="2">nav 2</Menu.Item>
-                    <Menu.Item key="3">nav 3</Menu.Item>
-                  </Menu>
-                </Col>
+            <Sider
+              breakpoint="lg"
+              collapsedWidth={40}
+              collapsed={collapsed}
+              width={300}
+              onBreakpoint={broken => {
+                console.log(broken);
+                this.onCollapse(broken);
+              }}
+              onCollapse={this.onCollapse}
+            >
+              <Row className="theme-heading">
+                {collapsed ? <MenuUnfoldOutlined onClick={() => this.onCollapse(!collapsed)} /> : <MenuFoldOutlined onClick={() => this.onCollapse(!collapsed)} />}
               </Row>
-            </Header>
-            <Layout>
-              <Sider width={200}>
-                <Menu
-                  theme="dark"
-                  mode="inline"
-                  defaultSelectedKeys={["1"]}
-                  defaultOpenKeys={["sub1"]}
-                  style={{ height: "100%", borderRight: 0 }}
-                >
-                  <SubMenu
-                    key="sub1"
-                    title={
-                      <span>
-                        <UserOutlined />
-                        subnav 1
-                      </span>
-                    }
+              <Row className="theme-selector-dropdown">
+                {!collapsed && (
+                  <Col span={22} offset={1}><FormItem
+                    {...themeLayout}
+                    label="Choose Theme"
+                    className="ant-col ant-col-xs-22 ant-col-offset-1 choose-theme"
                   >
-                    <Menu.Item key="1">option1</Menu.Item>
-                    <Menu.Item key="2">option2</Menu.Item>
-                    <Menu.Item key="3">option3</Menu.Item>
-                    <Menu.Item key="4">option4</Menu.Item>
-                  </SubMenu>
-                  <SubMenu
-                    key="sub2"
-                    title={
-                      <span>
-                        <LaptopOutlined />
-                        subnav 2
-                      </span>
-                    }
-                  >
-                    <Menu.Item key="5">option5</Menu.Item>
-                    <Menu.Item key="6">option6</Menu.Item>
-                    <Menu.Item key="7">option7</Menu.Item>
-                    <Menu.Item key="8">option8</Menu.Item>
-                  </SubMenu>
-                  <SubMenu
-                    key="sub3"
-                    title={
-                      <span>
-                        <NotificationOutlined />
-                        subnav 3
-                      </span>
-                    }
-                  >
-                    <Menu.Item key="9">option9</Menu.Item>
-                    <Menu.Item key="10">option10</Menu.Item>
-                    <Menu.Item key="11">option11</Menu.Item>
-                    <Menu.Item key="12">option12</Menu.Item>
-                  </SubMenu>
-                </Menu>
-              </Sider>
-              <Layout style={{ padding: "0 24px 24px" }}>
-                <Breadcrumb style={{ margin: "16px 0" }}>
-                  <Breadcrumb.Item>Home</Breadcrumb.Item>
-                  <Breadcrumb.Item>List</Breadcrumb.Item>
-                  <Breadcrumb.Item>App</Breadcrumb.Item>
-                </Breadcrumb>
-                <Content
-                  style={{
-                    padding: 24,
-                    margin: 0,
-                    minHeight: 280
-                  }}
-                >
-                  <Row>
-                    <Col xs={24} sm={6}>
-                      <Card title={(
-                        <Row type="flex" justify="space-between">
-                          <span>Theme</span>
-                          <Select
-                            className="theme-selector"
-                            placeholder="Please select theme"
-                            onSelect={value => {
-                              let vars = value === 'light' ? lightVars : darkVars;
-                              vars = { ...vars};
-                              if (value === 'light') {
-                                vars['@select-item-selected-option-color'] = vars['@text-color'];
-                              } else {
-                                vars['@select-item-selected-option-color'] = vars['@primary-color'];
-                              }
-                              this.setState({ vars: { ...vars} });
-                              console.log(': --------------------------')
-                              console.log('App -> render -> vars', vars)
-                              console.log(': --------------------------')
-                              window.less.modifyVars(vars).catch(error => {
-                                message.error(`Failed to reset theme`);
-                                this.setState({ vars });
-                                localStorage.setItem("app-theme", JSON.stringify(vars));
-                              });
-                            }}
-                          >
-                            <Option value="light">Light</Option>
-                            <Option value="dark">Dark</Option>
-                          </Select>
-                          </Row>
-                            )} style={{ width: 300 }}>
-                        <Row>
 
-                            </Row>
-                            <Row>
-                              {colorPickers}
-                              {/* <Col xs={24}>
-                            <Button
-                              type="primary"
-                              onClick={() => this.handleColorChange()}
-                            >
-                              Change Theme
-                            </Button>
-                          </Col> */}
-                              <Col xs={24} style={{ marginTop: "10px" }}>
-                                <Button type="primary" onClick={this.resetTheme}>
-                                  Reset Theme
-                            </Button>
-                              </Col>
-                            </Row>
-                          </Card>
-                        </Col>
-                        <Col xs={24} sm={{ span: 15, offset: 3 }}>
-                          <Form onSubmit={this.handleSubmit}>
-                            <Col xs={24} sm={12}>
-                              <FormItem
-                                {...formItemLayout}
-                                label="Select[multiple]"
-                                rules={[
-                                  {
-                                    required: true,
-                                    message:
-                                      "Please select your favourite colors!",
-                                    type: "array"
-                                  }
-                                ]}
-                              >
-                                <Select
-                                  mode="multiple"
-                                  placeholder="Please select favourite colors"
-                                >
-                                  <Option value="red">Red</Option>
-                                  <Option value="green">Green</Option>
-                                  <Option value="blue">Blue</Option>
-                                </Select>
-                              </FormItem>
+                    <Select
+                      placeholder="Please select theme"
+                      value={this.state.themeName}
+                      onSelect={value => {
+                        let vars = value === 'light' ? lightVars : darkVars;
+                        vars = { ...vars, '@white': '#fff', '@black': '#000' };
+                        this.setState({ vars, themeName: value });
+                        this.setState({ vars });
+                        localStorage.setItem("app-theme", JSON.stringify(vars));
+                        localStorage.setItem("theme-name", value);
+                        window.less.modifyVars(vars).catch(error => {
+                          
+                        });
+                      }}
+                    >
+                      <Option value="light">Light</Option>
+                      <Option value="dark">Dark</Option>
+                    </Select>
+                  </FormItem>
+                  </Col>
+                )}
+              </Row>
 
-                              <FormItem {...formItemLayout} label="Switch" valuePropName="checked">
-                                <Switch />
-                              </FormItem>
+              {colorPickers}
+              <Row type="flex" justify="center">
+                <Button type="primary" onClick={this.resetTheme} title="Reset Theme">
+                  {!collapsed ? "Reset Theme" : <CloseOutlined />}
+                </Button>
+              </Row>
 
-                              <FormItem {...formItemLayout} label="Radio.Group">
-                                <RadioGroup>
-                                  <Radio value={1}>A</Radio>
-                                  <Radio value={2}>B</Radio>
-                                  <Radio value={3}>C</Radio>
-                                  <Radio value={4}>D</Radio>
-                                </RadioGroup>
-                              </FormItem>
-
-                              <FormItem {...formItemLayout} label="Radio.Button">
-                                <RadioGroup>
-                                  <RadioButton value="a">item 1</RadioButton>
-                                  <RadioButton value="b">item 2</RadioButton>
-                                  <RadioButton value="c">item 3</RadioButton>
-                                </RadioGroup>
-                              </FormItem>
-                              <Progress percent={60} />
-                            </Col>
-                            <Col xs={24} sm={12}>
-                              <FormItem {...formItemLayout} label="Date">
-                                <DatePicker />
-                              </FormItem>
-                              <FormItem {...formItemLayout} label="Upload" valuePropName="fileList" getValueFromEvent={this.normFile}>
-                                <Upload
-                                  name="logo"
-                                  action="/upload.do"
-                                  listType="picture"
-                                >
-                                  <Button>
-                                    <Upload /> Click to upload
-                                </Button>
-                                </Upload>
-                              </FormItem>
-                              <FormItem wrapperCol={{ span: 12, offset: 6 }}>
-                                <Button type="default">Cancel</Button>
-                                <Button type="primary" htmlType="submit">
-                                  Submit
-                            </Button>
-                              </FormItem>
-
-
-
-                            </Col>
-                          </Form>
-                        </Col>
-                  </Row>
-                  <Row
-                        type="flex"
-                        justify="left"
-                        className="secondary-color"
-                      >
-                        <Col xs={24} sm={6}>
-                          <Card
-                            title="Default size card"
-                            extra={<a href="#">More</a>}
-                            style={{ width: 300 }}
-                          >
-                            <p>Card content</p>
-                            <p>Card content</p>
-                            <p>Card content</p>
-                          </Card>
-                          <Card
-                            size="small"
-                            title="Small size card"
-                            extra={<a href="#">More</a>}
-                            style={{ width: 300 }}
-                          >
-                            <p>Card content</p>
-                            <p>Card content</p>
-                            <p>Card content</p>
-                          </Card>
-                        </Col>
-                        <Col xs={24} sm={6}>
-                          <Row
-                            type="flex"
-                            justify="left"
-                            className="secondary-color"
-                          >
-                            <List
-                              itemLayout="horizontal"
-                              dataSource={listData}
-                              renderItem={item => (
-                                <List.Item>
-                                  <List.Item.Meta
-                                    avatar={
-                                      <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-                                    }
-                                    title={
-                                      <a href="https://ant.design">
-                                        {item.title}
-                                      </a>
-                                    }
-                                    description="Ant Design, a design language for background applications, is refined by Ant UED Team"
-                                  />
-                                </List.Item>
-                              )}
-                            />
-                          </Row>
-                        </Col>
-                        <Col xs={24} sm={6}>
-                          <Row
-                            type="flex"
-                            justify="left"
-                            className="secondary-color component-container"
-                          >
-                            <Dropdown overlay={menu}>
-                              <a className="ant-dropdown-link" href="#">
-                                Hover me <DownOutlined />
-                              </a>
-                            </Dropdown>
-                          </Row>
-                          <Row
-                            type="flex"
-                            justify="left"
-                            className="secondary-color component-container"
-                          >
-                            <Pagination defaultCurrent={1} total={50} />
-                          </Row>
-                          <Row
-                            type="flex"
-                            justify="left"
-                            className="secondary-color component-container"
-                          >
-                            <Checkbox>Checkbox</Checkbox>
-                          </Row>
-                        </Col>
-                        <Col xs={24} sm={6}>
-                          <Row
-                            type="flex"
-                            justify="left"
-                            className="secondary-color"
-                          >
-                            <div>
-                              <Badge count={5}>
-                                <a href="#" className="head-example" />
-                              </Badge>
-                              <Badge count={0} showZero>
-                                <a href="#" className="head-example" />
-                              </Badge>
-                              <Badge
-                                count={
-                                  <ClockCircleOutlined
-                                    style={{ color: "#f5222d" }}
-                                  />
-                                }
-                              >
-                                <a href="#" className="head-example" />
-                              </Badge>
-                            </div>
-                          </Row>
-                        </Col>
-                      </Row>
-                </Content>
-              </Layout>
-            </Layout>
-              </Layout>
-        </Row>
-      </div>
+            </Sider>
+            <Content id="preview-content">
+              <div className="preview">
+                <ColorPreview />
+                <TypographyPreview />
+                <ButtonPreview disabled={disabled} size={size} />
+                <RadioPreview disabled={disabled} size={size} />
+                <CheckboxPreview disabled={disabled} size={size} />
+                <InputPreview disabled={disabled} size={size} />
+                <SelectPreview disabled={disabled} size={size} />
+                <TreeSelectPreview disabled={disabled} size={size} />
+                <SwitchPreview disabled={disabled} size={size} />
+                <SliderPreview disabled={disabled} size={size} />
+                <DatePickerPreview disabled={disabled} size={size} />
+                <TimePickerPreview disabled={disabled} size={size} />
+                <RatePreview disabled={disabled} size={size} />
+                <StepPreview disabled={disabled} size={size} />
+                <CascaderPreview disabled={disabled} size={size} />
+                <DropdownPreview disabled={disabled} size={size} />
+                <TransferPreview disabled={disabled} size={size} />
+                <FormPreview disabled={disabled} size={size} />
+                <TablePreview disabled={disabled} size={size} />
+                <PaginationPreview disabled={disabled} size={size} />
+                <ProgressPreview disabled={disabled} size={size} />
+                <TreePreview disabled={disabled} size={size} />
+                <SpinPreview disabled={disabled} size={size} />
+                <TabsPreview disabled={disabled} size={size} />
+                <MenuPreview disabled={disabled} size={size} />
+                <CardPreview disabled={disabled} size={size} />
+                <CarouselPreview disabled={disabled} size={size} />
+                <CollapsePreview disabled={disabled} size={size} />
+                <AvatarPreview disabled={disabled} size={size} />
+                <CalendarPreview disabled={disabled} size={size} />
+                <ListPreview disabled={disabled} size={size} />
+                <TimelinePreview disabled={disabled} size={size} />
+                <TagPreview disabled={disabled} size={size} />
+                <BadgePreview disabled={disabled} size={size} />
+                <AlertPreview disabled={disabled} size={size} />
+                <MessagePreview disabled={disabled} size={size} />
+                <NotificationPreview disabled={disabled} size={size} />
+                <TooltipPreview disabled={disabled} size={size} />
+                <PopoverPreview disabled={disabled} size={size} />
+                <PopconfirmPreview disabled={disabled} size={size} />
+                <ModalPreview disabled={disabled} size={size} />
+              </div>
+            </Content>
+          </Layout>
+        </Content>
+        <Footer style={{ textAlign: 'center' }}>
+          Ant Design Live Theme ©2018 Created by Zohaib Ijaz (mzohaibqc)
+        </Footer>
+      </Layout>
     );
   }
 }

@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const { generateTheme, getLessVars } = require('../../index');
+// const { generateTheme, getLessVars } = require('antd-theme-generator');
 
 const themeVariables = getLessVars(path.join(__dirname, './src/styles/vars.less'))
 const defaultVars = getLessVars('./node_modules/antd/lib/style/themes/default.less')
@@ -12,7 +13,7 @@ fs.writeFileSync('./src/theme.json', JSON.stringify(themeVariables));
 
 
 const options = {
-  stylesDir: path.join(__dirname, './src/styles'),
+  stylesDir: path.join(__dirname, './src'),
   antDir: path.join(__dirname, './node_modules/antd'),
   varFile: path.join(__dirname, './src/styles/vars.less'),
   mainLessFile: path.join(__dirname, './src/styles/main.less'),
