@@ -272,17 +272,16 @@ ansi-styles@^3.0.0, ansi-styles@^3.2.1:
   dependencies:
     color-convert "^1.9.0"
 
-antd-theme-generator@^1.1.9:
-  version "1.1.9"
-  resolved "https://registry.yarnpkg.com/antd-theme-generator/-/antd-theme-generator-1.1.9.tgz#75f73a56f022da8f73316ad9d1d08ac2f6281678"
+antd-theme-generator@^1.2.3:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/antd-theme-generator/-/antd-theme-generator-1.2.4.tgz#a6ba3b32ad744eba4911c26a44ce7ccbc3695415"
   dependencies:
     glob "^7.1.3"
     hash.js "^1.1.5"
     less "^3.9.0"
-    less-bundle-promise "1.0.7"
     less-plugin-npm-import "^2.1.0"
     postcss "^6.0.21"
-    postcss-colors-only "0.0.3"
+    strip-css-comments "^4.1.0"
 
 antd@^3.12.1:
   version "3.26.11"
@@ -1726,10 +1725,6 @@ collection-visit@^1.0.0:
     map-visit "^1.0.0"
     object-visit "^1.0.0"
 
-color-convert@^0.5.3:
-  version "0.5.3"
-  resolved "https://registry.yarnpkg.com/color-convert/-/color-convert-0.5.3.tgz#bdb6c69ce660fadffe0b0007cc447e1b9f7282bd"
-
 color-convert@^1.3.0, color-convert@^1.9.0:
   version "1.9.2"
   resolved "https://registry.yarnpkg.com/color-convert/-/color-convert-1.9.2.tgz#49881b8fba67df12a96bdf3f56c0aab9e7913147"
@@ -1749,13 +1744,6 @@ color-string@^0.3.0:
   resolved "https://registry.yarnpkg.com/color-string/-/color-string-0.3.0.tgz#27d46fb67025c5c2fa25993bfbf579e47841b991"
   dependencies:
     color-name "^1.0.0"
-
-color@^0.10.1:
-  version "0.10.1"
-  resolved "https://registry.yarnpkg.com/color/-/color-0.10.1.tgz#c04188df82a209ddebccecdacd3ec320f193739f"
-  dependencies:
-    color-convert "^0.5.3"
-    color-string "^0.3.0"
 
 color@^0.11.0:
   version "0.11.4"
@@ -2018,14 +2006,6 @@ css-animation@^1.5.0:
   dependencies:
     babel-runtime "6.x"
     component-classes "^1.2.5"
-
-css-color-extractor@~0:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/css-color-extractor/-/css-color-extractor-0.0.5.tgz#b737a2553320b837b12e124affae03dd53c4acf2"
-  dependencies:
-    array-unique "^0.2.1"
-    color "^0.10.1"
-    postcss "^5.0.2"
 
 css-color-names@0.0.4:
   version "0.0.4"
@@ -3975,6 +3955,10 @@ is-regex@^1.0.4:
   dependencies:
     has "^1.0.1"
 
+is-regexp@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/is-regexp/-/is-regexp-2.1.0.tgz#cd734a56864e23b956bf4e7c66c396a4c0b22c2d"
+
 is-resolvable@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/is-resolvable/-/is-resolvable-1.1.0.tgz#fb18f87ce1feb925169c9a407c19318a3206ed88"
@@ -4531,10 +4515,6 @@ lcid@^1.0.0:
   resolved "https://registry.yarnpkg.com/lcid/-/lcid-1.0.0.tgz#308accafa0bc483a3867b4b6f2b9506251d1b835"
   dependencies:
     invert-kv "^1.0.0"
-
-less-bundle-promise@1.0.7:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/less-bundle-promise/-/less-bundle-promise-1.0.7.tgz#198d7991ac4f5f3c7862fac1074c7b9aca7b9cb2"
 
 less-loader@^4.1.0:
   version "4.1.0"
@@ -5587,13 +5567,6 @@ postcss-colormin@^2.1.8:
     colormin "^1.0.5"
     postcss "^5.0.13"
     postcss-value-parser "^3.2.3"
-
-postcss-colors-only@0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/postcss-colors-only/-/postcss-colors-only-0.0.3.tgz#24c713c21bfd16c0b2a3e883dd8a1033f4defe49"
-  dependencies:
-    css-color-extractor "~0"
-    postcss "^5.0.2"
 
 postcss-convert-values@^2.3.4:
   version "2.6.1"
@@ -7454,6 +7427,12 @@ strip-bom@^2.0.0:
   dependencies:
     is-utf8 "^0.2.0"
 
+strip-css-comments@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/strip-css-comments/-/strip-css-comments-4.1.0.tgz#ca798e3e6b71929f0b354e0bd72e7759b2ea17e0"
+  dependencies:
+    is-regexp "^2.1.0"
+
 strip-eof@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/strip-eof/-/strip-eof-1.0.0.tgz#bb43ff5598a6eb05d89b59fcd129c983313606bf"
@@ -8075,8 +8054,8 @@ websocket-driver@>=0.5.1:
     websocket-extensions ">=0.1.1"
 
 websocket-extensions@>=0.1.1:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.3.tgz#5d2ff22977003ec687a4b87073dfbbac146ccf29"
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.4.tgz#7f8473bc839dfd87608adb95d7eb075211578a42"
 
 whatwg-encoding@^1.0.1:
   version "1.0.4"
