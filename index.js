@@ -110,7 +110,9 @@ const reducePlugin = postcss.plugin('reducePlugin', () => {
       if (String(decl.value).match(/url\(.*\)/g)) {
         decl.remove();
       }
-      let matched = false;
+      const matched = false;
+      /*
+      this block causing https://github.com/ant-design/ant-design/issues/24777
       if (decl.prop !== 'background' && decl.prop.includes('background') && !decl.prop.match(/^background-(.*)color$/ig)) {
         decl.remove();
         matched = true;
@@ -123,6 +125,7 @@ const reducePlugin = postcss.plugin('reducePlugin', () => {
         decl.remove();
         matched = true;
       }
+      */
       if (
         !decl.prop.includes('color') &&
         !decl.prop.includes('background') &&
@@ -130,7 +133,8 @@ const reducePlugin = postcss.plugin('reducePlugin', () => {
         !decl.prop.includes('box-shadow') &&
         !Number.isNaN(decl.value)
       ) {
-        if (!matched) decl.remove();
+        // if (!matched) decl.remove();
+        decl.remove();
       } else {
         removeRule = matched ? removeRule : false;
       }
