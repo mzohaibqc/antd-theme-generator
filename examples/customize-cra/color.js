@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
-// const { generateTheme, getLessVars } = require('../../index');
-const { generateTheme, getLessVars } = require('antd-theme-generator');
+const { generateTheme, getLessVars } = require('../../index');
+// const { generateTheme, getLessVars } = require('antd-theme-generator');
 
 const themeVariables = getLessVars(path.join(__dirname, './src/styles/vars.less'))
 const defaultVars = getLessVars('./node_modules/antd/lib/style/themes/default.less')
