@@ -254,7 +254,11 @@ async function compileAllLessFilesToCss (stylesDir, antdStylesDir, varMap = {}, 
     Get all less files path in styles directory
     and then compile all to css and join
   */
-  const styles = glob.sync(path.join(stylesDir, './**/*.less'));
+  const stylesDirs = [].concat(stylesDir);
+  let styles = [];
+  stylesDirs.forEach(s => {
+    styles = styles.concat(glob.sync(path.join(s, './**/*.less')));
+  });
   const csss = await Promise.all(
     styles.map(filePath => {
       let fileContent = fs.readFileSync(filePath).toString();
@@ -283,10 +287,7 @@ async function compileAllLessFilesToCss (stylesDir, antdStylesDir, varMap = {}, 
       // fileContent = `@import "~antd/lib/style/themes/default.less";\n${fileContent}`;
       return less
         .render(fileContent, {
-          paths: [
-            stylesDir,
-            antdStylesDir
-          ],
+          paths: [antdStylesDir].concat(stylesDir),
           filename: path.resolve(filePath),
           javascriptEnabled: true,
           plugins: [new NpmImportPlugin({ prefix: '~' })]
@@ -339,7 +340,14 @@ async function generateTheme ({
       antdPath = path.join(antDir, 'lib');
     }
     const nodeModulesPath = path.join(antDir.slice(0, antDir.indexOf('node_modules')), './node_modules');
-    const styles = glob.sync(path.join(stylesDir, './**/*.less'));
+    /*
+      stylesDir can be array or string
+    */
+    const stylesDirs = [].concat(stylesDir);
+    let styles = [];
+    stylesDirs.forEach(s => {
+      styles = styles.concat(glob.sync(path.join(s, './**/*.less')));
+    });
 
     const antdStylesFile = path.join(antDir, './dist/antd.less'); // path.join(antdPath, './style/index.less');
     /*
@@ -362,10 +370,7 @@ async function generateTheme ({
     hashCache = hashCode;
     let themeCompiledVars = {};
     let themeVars = themeVariables || ['@primary-color'];
-    const lessPaths = [
-      path.join(antdPath, './style'),
-      stylesDir
-    ];
+    const lessPaths = [path.join(antdPath, './style')].concat(stylesDir);
 
     const randomColors = {};
     const randomColorsVars = {};
