@@ -1,6 +1,6 @@
 {
   "name": "antd-theme-generator",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "This a script to generate color specific styles less file and which you can use to change theme dynamically in browser",
   "main": "index.js",
   "scripts": {
@@ -8,6 +8,14 @@
     "lint": "eslint --fix index.js",
     "deploy": "cd examples/customize-cra && npm run build && gh-pages -d build && cd ../../"
   },
+  "bundledDependencies": [
+    "glob",
+    "hash.js",
+    "less",
+    "less-plugin-npm-import",
+    "postcss",
+    "strip-css-comments"
+  ],
   "dependencies": {
     "glob": "^7.1.3",
     "hash.js": "^1.1.5",

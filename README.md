@@ -27,6 +27,7 @@ generateTheme(options).then(less => {
 | Property | Type | Default | Descript |
 | --- | --- | --- | --- |
 | antdDir | string | - | This is path to antd directory in your node_modules |
+| stylesDir | string, [string] | - | Path/Paths to your custom styles directory containing .less files |
 | varFile | string | - | Path to your theme related variables file |
 | themeVariables | array | ['@primary-color'] | List of variables that you want to dynamically change |
 | outputFilePath | string | - | Generated less content will be written to file path specified otherwise it will not be written. However, you can use returned output and write in any file as you want |
