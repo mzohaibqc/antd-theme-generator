@@ -1,8 +1,8 @@
 # Changelog
 This document contains changes in this package with each version change.
-## [1.2.4] - 2020-06-06 (latest)
+## [1.2.5] - 2020-10-11 (latest)
 stylesDir can be a string or array of strings (['path1', 'path2']) if you have more than one styles directories in your project or you want to specify some sub directories e.g your component and containers directories containing styles for each component inside that directory.
-## [1.2.4] - 2020-06-06 (latest)
+## [1.2.4] - 2020-06-06
 - Fixed following issues
     - https://github.com/ant-design/ant-design/issues/24777
     - https://github.com/mzohaibqc/antd-theme-generator/issues/45
