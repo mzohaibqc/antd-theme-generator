@@ -1,8 +1,12 @@
 # Changelog
 This document contains changes in this package with each version change.
-## [1.2.4] - 2020-06-06 (latest)
+## [1.2.6] - 2020-10-15 (latest)
+Fixed a bug. input box-shadow color was generated different for every build due to `fade()`, fixed now.
+Fixed following bug:
+https://github.com/mzohaibqc/antd-theme-webpack-plugin/issues/69
+## [1.2.5] - 2020-10-10
 stylesDir can be a string or array of strings (['path1', 'path2']) if you have more than one styles directories in your project or you want to specify some sub directories e.g your component and containers directories containing styles for each component inside that directory.
-## [1.2.4] - 2020-06-06 (latest)
+## [1.2.4] - 2020-06-06
 - Fixed following issues
     - https://github.com/ant-design/ant-design/issues/24777
     - https://github.com/mzohaibqc/antd-theme-generator/issues/45
