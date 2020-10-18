@@ -1,6 +1,9 @@
 # Changelog
 This document contains changes in this package with each version change.
-## [1.2.6] - 2020-10-15 (latest)
+## [1.2.7] - 2020-10-18 (latest)
+Fixed slider thumb active color issue
+Fixed issues relater to box-shadow
+## [1.2.6] - 2020-10-15
 Fixed a bug. input box-shadow color was generated different for every build due to `fade()`, fixed now.
 Fixed following bug:
 https://github.com/mzohaibqc/antd-theme-webpack-plugin/issues/69
