@@ -1,25 +1,25 @@
 {
   "files": {
-    "main.css": "/antd-theme-generator/static/css/main.54f5f5cf.chunk.css",
-    "main.js": "/antd-theme-generator/static/js/main.48347b37.chunk.js",
-    "main.js.map": "/antd-theme-generator/static/js/main.48347b37.chunk.js.map",
-    "runtime-main.js": "/antd-theme-generator/static/js/runtime-main.a683703c.js",
-    "runtime-main.js.map": "/antd-theme-generator/static/js/runtime-main.a683703c.js.map",
-    "static/css/2.dd027c61.chunk.css": "/antd-theme-generator/static/css/2.dd027c61.chunk.css",
-    "static/js/2.7b37a1cb.chunk.js": "/antd-theme-generator/static/js/2.7b37a1cb.chunk.js",
-    "static/js/2.7b37a1cb.chunk.js.map": "/antd-theme-generator/static/js/2.7b37a1cb.chunk.js.map",
+    "main.css": "/antd-theme-generator/static/css/main.f012b49d.chunk.css",
+    "main.js": "/antd-theme-generator/static/js/main.d505fcb9.chunk.js",
+    "main.js.map": "/antd-theme-generator/static/js/main.d505fcb9.chunk.js.map",
+    "runtime-main.js": "/antd-theme-generator/static/js/runtime-main.dd141c1c.js",
+    "runtime-main.js.map": "/antd-theme-generator/static/js/runtime-main.dd141c1c.js.map",
+    "static/css/2.294c617b.chunk.css": "/antd-theme-generator/static/css/2.294c617b.chunk.css",
+    "static/js/2.f0a7677e.chunk.js": "/antd-theme-generator/static/js/2.f0a7677e.chunk.js",
+    "static/js/2.f0a7677e.chunk.js.map": "/antd-theme-generator/static/js/2.f0a7677e.chunk.js.map",
     "index.html": "/antd-theme-generator/index.html",
-    "precache-manifest.df336e9e435d0965c40580ab9ada9c57.js": "/antd-theme-generator/precache-manifest.df336e9e435d0965c40580ab9ada9c57.js",
+    "precache-manifest.45fa5c4100b4d6c1f9a4c70b6a7793da.js": "/antd-theme-generator/precache-manifest.45fa5c4100b4d6c1f9a4c70b6a7793da.js",
     "service-worker.js": "/antd-theme-generator/service-worker.js",
-    "static/css/2.dd027c61.chunk.css.map": "/antd-theme-generator/static/css/2.dd027c61.chunk.css.map",
-    "static/css/main.54f5f5cf.chunk.css.map": "/antd-theme-generator/static/css/main.54f5f5cf.chunk.css.map",
-    "static/js/2.7b37a1cb.chunk.js.LICENSE.txt": "/antd-theme-generator/static/js/2.7b37a1cb.chunk.js.LICENSE.txt"
+    "static/css/2.294c617b.chunk.css.map": "/antd-theme-generator/static/css/2.294c617b.chunk.css.map",
+    "static/css/main.f012b49d.chunk.css.map": "/antd-theme-generator/static/css/main.f012b49d.chunk.css.map",
+    "static/js/2.f0a7677e.chunk.js.LICENSE.txt": "/antd-theme-generator/static/js/2.f0a7677e.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.a683703c.js",
-    "static/css/2.dd027c61.chunk.css",
-    "static/js/2.7b37a1cb.chunk.js",
-    "static/css/main.54f5f5cf.chunk.css",
-    "static/js/main.48347b37.chunk.js"
+    "static/js/runtime-main.dd141c1c.js",
+    "static/css/2.294c617b.chunk.css",
+    "static/js/2.f0a7677e.chunk.js",
+    "static/css/main.f012b49d.chunk.css",
+    "static/js/main.d505fcb9.chunk.js"
   ]
 }
