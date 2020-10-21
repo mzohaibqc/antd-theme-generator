@@ -1,6 +1,9 @@
 # Changelog
 This document contains changes in this package with each version change.
-## [1.2.7] - 2020-10-18 (latest)
+## [1.2.8] - 2020-10-21 (latest)
+Fixed Link buton border color
+Issue Fixed: https://github.com/mzohaibqc/antd-theme-generator/issues/64
+## [1.2.7] - 2020-10-18
 Fixed slider thumb active color issue
 Fixed issues relater to box-shadow
 ## [1.2.6] - 2020-10-15

@@ -149,10 +149,13 @@ const reducePlugin = postcss.plugin("reducePlugin", () => {
         decl.remove();
         matched = true;
       }
-      if (!matched && decl.value === 'transparent') {
-        decl.remove();
-        matched = true;
-      }
+
+      // Removing transparent adds Link Button border color 
+      // https://github.com/mzohaibqc/antd-theme-generator/issues/64
+      // if (!matched && decl.value === 'transparent') {
+      //   decl.remove();
+      //   matched = true;
+      // }
       /*
       this block causing https://github.com/ant-design/ant-design/issues/24777
       if (decl.prop !== 'background' && decl.prop.includes('background') && !decl.prop.match(/^background-(.*)color$/ig)) {
