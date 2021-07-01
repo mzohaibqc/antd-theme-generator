@@ -176,6 +176,8 @@ const reducePlugin = postcss.plugin("reducePlugin", () => {
         !decl.prop.includes("background") &&
         !decl.prop.includes("border") &&
         !decl.prop.includes("box-shadow") &&
+        !decl.prop.includes("stroke") &&
+        !decl.prop.includes("fill") &&
         !Number.isNaN(decl.value)
       ) {
         // if (!matched) decl.remove();
