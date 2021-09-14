@@ -750,7 +750,7 @@ function combineLess(filePath, nodeModulesPath) {
     .split("\n")
     .map((line) => {
       if (line.startsWith("@import")) {
-        let importPath = line.match(/@import\ ["'](.*)["'];/)[1];
+        let importPath = line.match(/@import[^'"]*['"](.*)['"]/)[1];
         if (!importPath.endsWith(".less")) {
           importPath += ".less";
         }
